@@ -1,0 +1,12 @@
+table.table.table-striped
+  thead
+    tr
+      th From
+      th To
+      th Rate
+  tbody
+    - @rows.each do |row|
+      tr
+        td= row.currency1
+        td= row.currency2
+        td= row.rate
