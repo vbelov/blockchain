@@ -1,12 +1,18 @@
+= simple_form_for :exchange_rates, url: exchange_rates_path, method: :get, html: { class: 'form-inline' }, wrapper: :inline_form do |f|
+  = f.input :volume, as: :numeric, label: 'Объем', input_html: {value: volume}, autofocus: true
+  = f.button :submit, 'Обновить'
+
 table.table.table-striped
   thead
     tr
-      th From
-      th To
-      th Rate
+      th Биржа
+      th Пара
+      th Цена покупки
+      th Цена продажи
   tbody
     - @rows.each do |row|
       tr
-        td= row.currency1
-        td= row.currency2
-        td= row.rate
+        td Yobit
+        td= "#{row.target_currency.upcase} / #{row.base_currency.upcase}"
+        td= fr(row.buy_rate)
+        td= fr(row.sell_rate)

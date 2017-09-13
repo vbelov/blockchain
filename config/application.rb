@@ -14,5 +14,13 @@ module Blockchain
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
+
+    config.generators do |g|
+      g.javascripts     false
+      g.stylesheets     false
+      g.helper          false
+      g.test_framework  nil
+      g.template_engine :slim
+    end
   end
 end

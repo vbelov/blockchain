@@ -1,9 +1,17 @@
 class ExchangeRatesController < ApplicationController
+  helper_method :volume
+
   def index
-    hash = Stocks::Yobit.new.current_exchange_rates('btc', 0.1)
-    @rows = hash.map do |pair, rate|
-      c1, c2 = pair.split('_')
-      OpenStruct.new(currency1: c1.upcase, currency2: c2.upcase, rate: rate)
-    end
+    @rows = Stocks::Yobit.new.current_exchange_rates('btc', volume)
+  end
+
+  private
+
+  def volume
+    (exchange_rates_params[:volume].presence || 0.1).to_f
+  end
+
+  def exchange_rates_params
+    params[:exchange_rates].presence || {}
   end
 end

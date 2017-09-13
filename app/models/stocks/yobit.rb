@@ -27,15 +27,27 @@ module Stocks
       @info ||= with_cache('info.json') { get('info') }
     end
 
-    def with_cache(filename)
-      path = "tmp/cache/#{filename}"
-      if File.exists?(path)
-        json = File.read(path)
+    def with_cache(filename, &block)
+      cache = Rails.env.development?
+      if cache
+        path = "tmp/cache/#{filename}"
+        if File.exists?(path)
+          json = File.read(path)
+        else
+          json = yield
+          File.open(path, 'w+') { |f| f.write(json) }
+        end
       else
-        json = yield
-        File.open(path, 'w+') { |f| f.write(json) }
+        json = memory_cache(filename, &block)
       end
       JSON.parse(json)
+    end
+
+    def memory_cache(filename)
+      @memory_cache ||= {}
+      res = @memory_cache[filename]
+      res = @memory_cache[filename] = yield unless res
+      res
     end
 
     def valid_pairs_info
@@ -48,55 +60,122 @@ module Stocks
       end
     end
 
-    def glass(pair_code = 'eth_btc')
+    class Order
+      include Virtus.model
+
+      attribute :target_currency, String
+      attribute :base_currency, String
+      attribute :action, Symbol # :buy, :sell
+      attribute :rate, Float
+      attribute :target_volume, Float
+      attribute :cumulative_volume, Float
+      attribute :used, Symbol # :full, :partial, :none
+
+      def base_volume
+        rate * target_volume
+      end
+    end
+
+    def glass(pair_code = 'eth_btc', action)
       # JSON.parse(get("depth/#{pair_code}"))
-      cached_glass(pair_code)
+      hash = cached_glass(pair_code)
+      part = action == :sell ? 'bids' : 'asks'
+      tc, bc = pair_code.split('_')
+      g = hash[pair_code][part].map do |rate, volume|
+        Order.new(
+            target_currency: tc,
+            base_currency: bc,
+            action: action,
+            rate: rate,
+            target_volume: volume,
+        )
+      end
+      cumulative_volume = 0
+      g.each do |o|
+        cumulative_volume += o.base_volume
+        o.cumulative_volume = cumulative_volume
+      end
+      g
     end
 
     def ticker
       @ticker ||= with_cache('ticker.json') { get("ticker/#{valid_pairs.join('-')}") }
     end
 
-    class NoAmount < RuntimeError; end
-
-    def price(my_currency, my_amount, target_currency)
-      # puts "loading price #{my_amount} #{my_currency} => #{target_currency}"
-      pair, direction, aaa = find_pair(my_currency, target_currency)
-      hash = glass(pair)
-      amount_left = my_amount
-      target_currency_total_amount = 0
-      hash[pair][direction].take_while do |order|
-        exchange_rate = order[0]
-        exchange_rate = 1.0 / exchange_rate unless aaa
-        target_currency_order_amount = order[1]
-        my_currency_order_amount = exchange_rate * target_currency_order_amount
-        if amount_left > my_currency_order_amount
-          amount_left -= my_currency_order_amount
-          target_currency_total_amount += target_currency_order_amount
+    def process_glass(target_currency, base_currency, action, amount)
+      pair = "#{target_currency}_#{base_currency}"
+      orders = glass(pair, action)
+      base_volume = amount
+      target_volume = 0
+      orders.each { |o| o.used = :none }
+      orders.take_while do |order|
+        if base_volume >= order.base_volume
+          base_volume -= order.base_volume
+          target_volume += order.target_volume
+          order.used = :full
           true
         else
-          target_currency_total_amount += amount_left / exchange_rate
-          amount_left = 0
+          target_volume += base_volume / order.rate
+          base_volume = 0
+          order.used = :partial
           false
         end
       end
-      raise NoAmount, "failed to collect amount in currency #{target_currency}" unless amount_left == 0
+      error = base_volume == 0 ? nil : "Недостаточный объем сделок: #{amount - base_volume} < #{amount}"
 
-      target_currency_total_amount
+      OpenStruct.new(
+          orders: orders,
+          target_volume: target_volume,
+          error: error,
+          effective_rate: amount / target_volume,
+      )
     end
 
-    def find_pair(currency_to_sell, currency_to_buy)
-      pair1 = "#{currency_to_sell}_#{currency_to_buy}"
-      pair2 = "#{currency_to_buy}_#{currency_to_sell}"
-      if valid_pairs.include?(pair1)
-        [pair1, 'asks', false]
-      elsif valid_pairs.include?(pair2)
-        [pair2, 'bids', true]
-      else
-        raise 'pair not found'
+    class ExchangeRate
+      include Virtus.model
+
+      attribute :target_currency, String
+      attribute :base_currency, String
+      attribute :buy_rate, Float
+      attribute :sell_rate, Float
+    end
+
+    def current_exchange_rates(base_currency, base_amount)
+      hash = JSON.parse(get("depth/#{valid_pairs.join('-')}"))
+      @memory_cache ||= {}
+      valid_pairs.each do |pair|
+        key = "depth-#{pair}.json"
+        @memory_cache[key] = hash.slice(pair).to_json
+      end
+
+      valid_pairs.map do |pair|
+        tc, bc = pair.split('_')
+        er = ExchangeRate.new(
+            target_currency: tc,
+            base_currency: bc,
+        )
+
+        [:buy, :sell].map do |action|
+          raise NotImplementedError unless bc == base_currency
+          result = process_glass(tc, bc, action, base_amount)
+          er.send("#{action}_rate=", result.effective_rate) unless result.error
+        end
+
+        er
       end
     end
 
+    def get(path)
+      puts "sending request to #{path}"
+      response = RestClient.get "https://yobit.net/api/3/#{path}"
+      response.body
+    end
+
+    def clear_cache
+      FileUtils.rm_rf Dir.glob('cache/*')
+    end
+
+    # под вопросом
     def approximate_exchange_rates
       @approximate_exchange_rates ||=
           begin
@@ -111,6 +190,7 @@ module Stocks
           end
     end
 
+    # под вопросом
     def approximate_amounts(base_currency, base_amount)
       currencies.map do |currency|
         next [currency, base_amount] if currency == base_currency
@@ -123,37 +203,5 @@ module Stocks
         end
       end.to_h
     end
-
-    def current_exchange_rates(base_currency, base_amount)
-      amounts = approximate_amounts(base_currency, base_amount)
-
-      valid_pairs.flat_map do |pair|
-        pair.split('_').permutation(2).to_a.map do |currency1, currency2|
-          p = "#{currency2}_#{currency1}"
-
-          begin
-            amount = amounts[currency1]
-            pr = price(currency1, amount, currency2)
-            rate = amount / pr
-            [p, rate]
-          rescue NoAmount => err
-            puts err.message
-            [p, nil]
-          end
-        end
-      end.to_h
-    end
-
-    def get(path)
-      puts "sending request to #{path}"
-      response = RestClient.get "https://yobit.net/api/3/#{path}"
-      response.body
-    end
-
-    def clear_cache
-      FileUtils.rm_rf Dir.glob('cache/*')
-    end
   end
 end
-
-# ap Stocks::Yobit.new.current_exchange_rates('btc', 0.1)
