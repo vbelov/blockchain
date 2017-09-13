@@ -11,7 +11,11 @@ class GlassesController < ApplicationController
   end
 
   def result
-    @result ||= yobit.process_glass(target_currency, base_currency, action, volume)
+    @result ||= yobit.process_glass(vector, volume)
+  end
+
+  def vector
+    Vector.my_find(target_currency, base_currency, action)
   end
 
   def target_currency
@@ -23,7 +27,7 @@ class GlassesController < ApplicationController
   end
 
   def valid_pairs
-    yobit.valid_pairs.map { |p| p.split('_').map(&:upcase).join(' / ') }
+    yobit.valid_pairs.map(&:slashed_code)
   end
 
   def pair

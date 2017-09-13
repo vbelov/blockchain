@@ -10,23 +10,28 @@
 # смотрим средневзвешенный курс в каждой паре
 module Stocks
   class Yobit
-    def currencies
-      %w(btc eth bcc xrp ltc xem dash xmr iot etc omg gno neo qtum mtl)
-      # %w(btc eth ltc)
-    end
-
+    # yobit specific
     def valid_pairs
       @valid_pairs ||=
-          info['pairs'].keys.select do |pair|
-            c1, c2 = pair.split('_')
-            c1.in?(currencies) && c2.in?(currencies)
-          end
+          info['pairs'].keys.map do |pair|
+            code1, code2 = pair.split('_')
+            c1 = Currency.find_by_code(code1)
+            c2 = Currency.find_by_code(code2)
+            if c1 && c2
+              Pair.new(
+                  target_currency: c1,
+                  base_currency: c2,
+              )
+            end
+          end.compact
     end
 
+    # yobit specific
     def info
       @info ||= with_cache('info.json') { get('info') }
     end
 
+    # generic
     def with_cache(filename, &block)
       cache = Rails.env.development?
       if cache
@@ -43,6 +48,7 @@ module Stocks
       JSON.parse(json)
     end
 
+    # generic
     def memory_cache(filename)
       @memory_cache ||= {}
       res = @memory_cache[filename]
@@ -50,42 +56,22 @@ module Stocks
       res
     end
 
-    def valid_pairs_info
-      info.merge('pairs' => info['pairs'].slice(*valid_pairs))
+    # yobit specific
+    def get_glass_impl(vector)
+      pair_code = "#{vector.target_code}_#{vector.base_code}"
+      hash =
+          with_cache("depth-#{pair_code}.json") do
+            get "depth/#{pair_code}"
+          end
+      part = vector.sell? ? 'bids' : 'asks'
+      hash[pair_code][part]
     end
 
-    def cached_glass(pair_code = 'eth_btc')
-      with_cache("depth-#{pair_code}.json") do
-        get "depth/#{pair_code}"
-      end
-    end
-
-    class Order
-      include Virtus.model
-
-      attribute :target_currency, String
-      attribute :base_currency, String
-      attribute :action, Symbol # :buy, :sell
-      attribute :rate, Float
-      attribute :target_volume, Float
-      attribute :cumulative_volume, Float
-      attribute :used, Symbol # :full, :partial, :none
-
-      def base_volume
-        rate * target_volume
-      end
-    end
-
-    def glass(pair_code = 'eth_btc', action)
-      # JSON.parse(get("depth/#{pair_code}"))
-      hash = cached_glass(pair_code)
-      part = action == :sell ? 'bids' : 'asks'
-      tc, bc = pair_code.split('_')
-      g = hash[pair_code][part].map do |rate, volume|
+    # generic
+    def glass(vector)
+      g = get_glass_impl(vector).map do |rate, volume|
         Order.new(
-            target_currency: tc,
-            base_currency: bc,
-            action: action,
+            vector: vector,
             rate: rate,
             target_volume: volume,
         )
@@ -98,13 +84,8 @@ module Stocks
       g
     end
 
-    def ticker
-      @ticker ||= with_cache('ticker.json') { get("ticker/#{valid_pairs.join('-')}") }
-    end
-
-    def process_glass(target_currency, base_currency, action, amount)
-      pair = "#{target_currency}_#{base_currency}"
-      orders = glass(pair, action)
+    def process_glass(vector, amount)
+      orders = glass(vector)
       base_volume = amount
       target_volume = 0
       orders.each { |o| o.used = :none }
@@ -131,33 +112,26 @@ module Stocks
       )
     end
 
-    class ExchangeRate
-      include Virtus.model
-
-      attribute :target_currency, String
-      attribute :base_currency, String
-      attribute :buy_rate, Float
-      attribute :sell_rate, Float
-    end
-
-    def current_exchange_rates(base_currency, base_amount)
-      hash = JSON.parse(get("depth/#{valid_pairs.join('-')}"))
+    # yobit specific
+    def preload_glasses
+      hash = JSON.parse(get("depth/#{valid_pairs.map(&:underscored_code).join('-')}"))
       @memory_cache ||= {}
       valid_pairs.each do |pair|
         key = "depth-#{pair}.json"
         @memory_cache[key] = hash.slice(pair).to_json
       end
+    end
+
+    def current_exchange_rates(base_currency, base_amount)
+      preload_glasses
 
       valid_pairs.map do |pair|
-        tc, bc = pair.split('_')
-        er = ExchangeRate.new(
-            target_currency: tc,
-            base_currency: bc,
-        )
+        er = ExchangeRate.new(pair: pair)
 
         [:buy, :sell].map do |action|
-          raise NotImplementedError unless bc == base_currency
-          result = process_glass(tc, bc, action, base_amount)
+          vector = Vector.new(pair: pair, action: action)
+          raise NotImplementedError unless pair.base_currency == base_currency
+          result = process_glass(vector, base_amount)
           er.send("#{action}_rate=", result.effective_rate) unless result.error
         end
 
@@ -171,37 +145,49 @@ module Stocks
       response.body
     end
 
-    def clear_cache
-      FileUtils.rm_rf Dir.glob('cache/*')
-    end
 
-    # под вопросом
-    def approximate_exchange_rates
-      @approximate_exchange_rates ||=
-          begin
-            rates = []
-            valid_pairs.each do |pair|
-              avg = ticker[pair]['avg']
-              rates << [pair, avg]
-              another_pair = pair.split('_').reverse.join('_')
-              rates << [another_pair, 1.0 / avg]
+    module NotUsed
+      def clear_cache
+        FileUtils.rm_rf Dir.glob('cache/*')
+      end
+
+      # yobit specific
+      def ticker
+        @ticker ||= with_cache('ticker.json') { get("ticker/#{valid_pairs.join('-')}") }
+      end
+
+      def valid_pairs_info
+        info.merge('pairs' => info['pairs'].slice(*valid_pairs))
+      end
+
+      # под вопросом
+      def approximate_exchange_rates
+        @approximate_exchange_rates ||=
+            begin
+              rates = []
+              valid_pairs.each do |pair|
+                avg = ticker[pair]['avg']
+                rates << [pair, avg]
+                another_pair = pair.split('_').reverse.join('_')
+                rates << [another_pair, 1.0 / avg]
+              end
+              rates.to_h
             end
-            rates.to_h
-          end
-    end
+      end
 
-    # под вопросом
-    def approximate_amounts(base_currency, base_amount)
-      currencies.map do |currency|
-        next [currency, base_amount] if currency == base_currency
-        pair = "#{base_currency}_#{currency}"
-        rate = approximate_exchange_rates[pair]
-        if rate
-          [currency, rate * base_amount]
-        else
-          [currency, nil]
-        end
-      end.to_h
+      # под вопросом
+      def approximate_amounts(base_currency, base_amount)
+        currencies.map do |currency|
+          next [currency, base_amount] if currency == base_currency
+          pair = "#{base_currency}_#{currency}"
+          rate = approximate_exchange_rates[pair]
+          if rate
+            [currency, rate * base_amount]
+          else
+            [currency, nil]
+          end
+        end.to_h
+      end
     end
   end
 end

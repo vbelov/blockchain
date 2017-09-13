@@ -2,7 +2,7 @@ class ExchangeRatesController < ApplicationController
   helper_method :volume
 
   def index
-    @rows = Stocks::Yobit.new.current_exchange_rates('btc', volume)
+    @rows = Stocks::Yobit.new.current_exchange_rates(Currency.btc, volume)
   end
 
   private

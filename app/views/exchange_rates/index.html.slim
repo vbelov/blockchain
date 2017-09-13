@@ -13,6 +13,6 @@ table.table.table-striped
     - @rows.each do |row|
       tr
         td Yobit
-        td= "#{row.target_currency.upcase} / #{row.base_currency.upcase}"
+        td= row.pair.slashed_code
         td= fr(row.buy_rate)
         td= fr(row.sell_rate)
