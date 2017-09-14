@@ -1,4 +1,5 @@
-= simple_form_for :glass, url: glasses_path, method: :get, html: { class: 'form-inline' }, wrapper: :inline_form do |f|
+= simple_form_for :glass, url: glasses_path, method: :get, html: { class: 'form-inline glass-form' }, wrapper: :inline_form do |f|
+  = f.input :stock_name, collection: stock_names, label: 'Биржа', selected: stock_name
   = f.input :pair, collection: valid_pairs, label: 'Пара', selected: pair, autofocus: true
   = f.input :action, collection: %w(sell buy), selected: action, label: 'Операция'
   = f.input :volume, as: :numeric, label: 'Объем', input_html: {value: volume}

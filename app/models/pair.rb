@@ -1,5 +1,6 @@
 class Pair
   include Virtus.model
+  include Comparable
 
   attribute :target_currency, Currency
   attribute :base_currency, Currency
@@ -8,8 +9,18 @@ class Pair
     target_currency.code
   end
 
+  # noinspection RubyInstanceMethodNamingConvention
+  def target_CODE
+    target_currency.CODE
+  end
+
   def base_code
     base_currency.code
+  end
+
+  # noinspection RubyInstanceMethodNamingConvention
+  def base_CODE
+    base_currency.CODE
   end
 
   def slashed_code
@@ -18,5 +29,19 @@ class Pair
 
   def underscored_code
     "#{target_currency.code}_#{base_currency.code}"
+  end
+
+  def <=>(other)
+    slashed_code <=> other.slashed_code
+  end
+
+  class << self
+    def find_by_code(code)
+      c1, c2 = code.split(' / ')
+      Pair.new(
+          target_currency: Currency.find_by_code(c1),
+          base_currency: Currency.find_by_code(c2),
+      )
+    end
   end
 end

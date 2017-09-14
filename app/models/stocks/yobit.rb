@@ -10,19 +10,8 @@
 # смотрим средневзвешенный курс в каждой паре
 module Stocks
   class Yobit < Base
-    def valid_pairs
-      @valid_pairs ||=
-          info['pairs'].keys.map do |pair|
-            code1, code2 = pair.split('_')
-            c1 = Currency.find_by_code(code1)
-            c2 = Currency.find_by_code(code2)
-            if c1 && c2
-              Pair.new(
-                  target_currency: c1,
-                  base_currency: c2,
-              )
-            end
-          end.compact
+    def pairs
+      info['pairs'].keys
     end
 
     def info

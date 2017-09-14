@@ -1,5 +1,20 @@
 module Stocks
   class Base
+    def valid_pairs
+      @valid_pairs ||=
+          pairs.map do |pair|
+            code1, code2 = pair.split('_').map(&:downcase)
+            c1 = Currency.find_by_code(code1)
+            c2 = Currency.find_by_code(code2)
+            if c1 && c2
+              Pair.new(
+                  target_currency: c1,
+                  base_currency: c2,
+              )
+            end
+          end.compact
+    end
+
     def glass(vector)
       g = get_glass_impl(vector).map do |rate, volume|
         Order.new(
@@ -44,17 +59,19 @@ module Stocks
       )
     end
 
-    def current_exchange_rates(base_currency, base_amount)
+    def current_exchange_rates(base_currency, base_amount, pairs: nil)
       preload_glasses
 
-      valid_pairs.map do |pair|
-        er = ExchangeRate.new(pair: pair)
+      pairs = pairs&.map { |pair| pair.is_a?(Pair) ? pair : Pair.find_by_code(pair) } || valid_pairs
+      pairs.map do |pair|
+        er = ExchangeRate.new(stock: self.class.name.demodulize, pair: pair)
 
-        [:buy, :sell].map do |action|
-          vector = Vector.new(pair: pair, action: action)
-          raise NotImplementedError unless pair.base_currency == base_currency
-          result = process_glass(vector, base_amount)
-          er.send("#{action}_rate=", result.effective_rate) unless result.error
+        [:buy, :sell].each do |action|
+          if pair.base_currency == base_currency
+            vector = Vector.new(pair: pair, action: action)
+            result = process_glass(vector, base_amount)
+            er.send("#{action}_rate=", result.effective_rate) unless result.error
+          end
         end
 
         er
@@ -70,7 +87,7 @@ module Stocks
     def with_cache(filename, &block)
       cache = Rails.env.development?
       if cache
-        path = "tmp/cache/#{filename}"
+        path = "tmp/cache/#{self.class.name.demodulize.underscore}-#{filename}"
         if File.exists?(path)
           json = File.read(path)
         else

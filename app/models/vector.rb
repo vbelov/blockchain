@@ -6,6 +6,7 @@ class Vector
 
   delegate :target_currency, :base_currency,
            :target_code, :base_code,
+           :target_CODE, :base_CODE,
            to: :pair
 
   def sell?

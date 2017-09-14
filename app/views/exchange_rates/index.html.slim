@@ -1,4 +1,6 @@
 = simple_form_for :exchange_rates, url: exchange_rates_path, method: :get, html: { class: 'form-inline' }, wrapper: :inline_form do |f|
+  = f.input :stock_name, collection: stock_names, label: 'Биржа', selected: stock_name, include_blank: 'Все'
+  = f.input :pair, collection: list_of_pairs, label: 'Пара', selected: pair
   = f.input :volume, as: :numeric, label: 'Объем', input_html: {value: volume}, autofocus: true
   = f.button :submit, 'Обновить'
 
@@ -12,7 +14,7 @@ table.table.table-striped
   tbody
     - @rows.each do |row|
       tr
-        td Yobit
+        td= row.stock
         td= row.pair.slashed_code
         td= fr(row.buy_rate)
         td= fr(row.sell_rate)

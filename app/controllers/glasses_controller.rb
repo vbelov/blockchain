@@ -1,17 +1,29 @@
 class GlassesController < ApplicationController
-  helper_method :pair, :target_currency, :base_currency, :action, :volume, :result, :valid_pairs
+  helper_method :target_currency, :base_currency,
+                :action, :volume,
+                :result,
+                :valid_pairs, :pair,
+                :stock_names, :stock_name
 
   def index
   end
 
   private
 
-  def yobit
-    @yobit ||= Stocks::Yobit.new
+  def stock_names
+    %w(Yobit Poloniex)
+  end
+
+  def stock_name
+    stock_names.find { |p| p == glass_params[:stock_name] } || 'Yobit'
+  end
+
+  def stock
+    @stock ||= Stocks.const_get(stock_name).new
   end
 
   def result
-    @result ||= yobit.process_glass(vector, volume)
+    @result ||= stock.process_glass(vector, volume)
   end
 
   def vector
@@ -27,11 +39,12 @@ class GlassesController < ApplicationController
   end
 
   def valid_pairs
-    yobit.valid_pairs.map(&:slashed_code)
+    stock.valid_pairs.map(&:slashed_code)
   end
 
   def pair
-    valid_pairs.find { |p| p == glass_params[:pair] } || 'ETH / BTC'
+    find = ->(code) { valid_pairs.find { |p| p == code } }
+    find.(glass_params[:pair]) || find.('ETH / BTC') || valid_pairs.first
   end
 
   def actions
