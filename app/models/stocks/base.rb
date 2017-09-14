@@ -62,7 +62,10 @@ module Stocks
     def current_exchange_rates(base_currency, base_amount, pairs: nil)
       preload_glasses
 
-      pairs = pairs&.map { |pair| pair.is_a?(Pair) ? pair : Pair.find_by_code(pair) } || valid_pairs
+      pairs = pairs
+                  &.map { |pair| pair.is_a?(Pair) ? pair : Pair.find_by_code(pair) }
+                  &.select { |p| p.in?(valid_pairs) } ||
+          valid_pairs
       pairs.map do |pair|
         er = ExchangeRate.new(stock: self.class.name.demodulize, pair: pair)
 
