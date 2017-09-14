@@ -4,6 +4,7 @@ module Stocks
       @valid_pairs ||=
           pairs.map do |pair|
             code1, code2 = pair.split('_').map(&:downcase)
+            next unless code2 == 'btc'
             c1 = Currency.find_by_code(code1)
             c2 = Currency.find_by_code(code2)
             if c1 && c2
