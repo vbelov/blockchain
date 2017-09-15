@@ -51,9 +51,7 @@ class ExchangeRatesController < ApplicationController
 
   def pair
     _pair = exchange_rates_params[:pair]
-    if _pair.blank?
-      'ETH / BTC'
-    elsif _pair == 'Все'
+    if _pair.blank? || _pair == 'Все'
       nil
     else
       valid_pairs.find { |p| p == _pair }
