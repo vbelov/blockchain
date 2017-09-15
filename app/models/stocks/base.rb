@@ -63,7 +63,12 @@ module Stocks
     end
 
     def get_orders(vector)
-      g = get_raw_orders(vector).map do |rate, volume|
+      raw_orders = get_raw_orders(vector)
+      build_orders(vector, raw_orders)
+    end
+
+    def build_orders(vector, raw_orders)
+      g = raw_orders.map do |rate, volume|
         Order.new(
             vector: vector,
             rate: rate,
@@ -78,8 +83,20 @@ module Stocks
       g
     end
 
-    def process_glass(vector, amount)
+    def process_glass(glass, action, amount)
+      json = glass.send("#{action}_orders")
+      raw_orders = JSON.parse(json)
+      vector = Vector.my_find(glass.target_code, glass.base_code, action)
+      orders = build_orders(vector, raw_orders)
+      process_orders(orders, amount)
+    end
+
+    def process_vector(vector, amount)
       orders = get_orders(vector)
+      process_orders(orders, amount)
+    end
+
+    def process_orders(orders, amount)
       base_volume = amount
       target_volume = 0
       orders.each { |o| o.used = :none }
@@ -117,7 +134,7 @@ module Stocks
         [:buy, :sell].each do |action|
           if pair.base_currency == base_currency
             vector = Vector.new(pair: pair, action: action)
-            result = process_glass(vector, base_amount)
+            result = process_vector(vector, base_amount)
             er.send("#{action}_rate=", result.effective_rate) unless result.error
           end
         end

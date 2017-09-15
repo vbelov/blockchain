@@ -23,7 +23,7 @@ class GlassesController < ApplicationController
   end
 
   def result
-    @result ||= stock.process_glass(vector, volume)
+    @result ||= stock.process_vector(vector, volume)
   end
 
   def vector

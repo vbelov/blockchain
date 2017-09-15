@@ -17,6 +17,15 @@
 #= require jquery
 #= require bootstrap-sprockets
 
+#= require highcharts
+#= require chartkick
+
+Highcharts.setOptions({
+  global: {
+    useUTC: false
+  }
+});
+
 $ ->
   $("form.glass-form").each ->
     form = $(this)

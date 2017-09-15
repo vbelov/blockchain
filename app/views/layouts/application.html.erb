@@ -35,6 +35,9 @@
             <%= content_tag :li, class: (controller_name == 'commands' ? 'active' : '') do %>
                 <%= link_to 'Операции', commands_path %>
             <% end %>
+            <%= content_tag :li, class: (controller_name == 'graphs' ? 'active' : '') do %>
+                <%= link_to 'Динамика', graphs_path %>
+            <% end %>
           </ul>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->

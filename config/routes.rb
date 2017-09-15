@@ -8,4 +8,5 @@ Rails.application.routes.draw do
       post :refresh_glasses
     end
   end
+  resources :graphs, only: :index
 end

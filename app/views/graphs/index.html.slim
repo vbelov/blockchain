@@ -1,0 +1,11 @@
+= simple_form_for :glass, url: graphs_path, method: :get, html: { class: 'form-inline' }, wrapper: :inline_form do |f|
+  = f.input :pair, collection: valid_pairs, label: 'Пара', selected: pair, autofocus: true
+  = f.input :volume, as: :numeric, label: 'Объем', input_html: {value: volume}
+  = f.button :submit, 'Загрузить'
+
+br
+
+- charts.each do |chart|
+  p
+    strong = chart[:title]
+  = line_chart chart[:chart_data]
