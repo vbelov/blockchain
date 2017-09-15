@@ -1,5 +1,9 @@
 module Stocks
   class Base
+    def stock_code
+      self.class.name.demodulize
+    end
+
     def valid_pairs
       @valid_pairs ||=
           pairs.map do |pair|
@@ -16,8 +20,46 @@ module Stocks
           end.compact
     end
 
-    def glass(vector)
-      g = get_glass_impl(vector).map do |rate, volume|
+    def refresh_glasses
+      download_order_books.each { |pair, data| save_glass(pair, data) }
+    end
+
+    def save_glass(pair, pair_data)
+      Glass.create!(
+          stock_code: stock_code,
+          target_code: pair.target_code,
+          base_code: pair.base_code,
+          sell_orders: pair_data['bids'].to_json,
+          buy_orders: pair_data['asks'].to_json,
+      )
+    end
+
+    def find_or_fetch_glass(vector)
+      glass = Glass.where(
+          stock_code: stock_code,
+          target_code: vector.target_code,
+          base_code: vector.base_code,
+      ).order(created_at: :desc).first
+
+      unless glass
+        pair = vector.pair
+        pair_data = download_order_books([pair])[pair]
+        glass = save_glass(pair, pair_data) if pair_data
+      end
+
+      glass
+    end
+
+    def get_raw_orders(vector)
+      glass = find_or_fetch_glass(vector)
+      if glass
+        json = glass.send("#{vector.action}_orders")
+        JSON.parse(json)
+      end
+    end
+
+    def get_orders(vector)
+      g = get_raw_orders(vector).map do |rate, volume|
         Order.new(
             vector: vector,
             rate: rate,
@@ -33,7 +75,7 @@ module Stocks
     end
 
     def process_glass(vector, amount)
-      orders = glass(vector)
+      orders = get_orders(vector)
       base_volume = amount
       target_volume = 0
       orders.each { |o| o.used = :none }
@@ -61,8 +103,6 @@ module Stocks
     end
 
     def current_exchange_rates(base_currency, base_amount, pairs: nil)
-      preload_glasses
-
       pairs = pairs
                   &.map { |pair| pair.is_a?(Pair) ? pair : Pair.find_by_code(pair) }
                   &.select { |p| p.in?(valid_pairs) } ||
@@ -82,9 +122,6 @@ module Stocks
       end
     end
 
-    def preload_glasses
-    end
-
     def currency_by_code(code)
       code = conversion_table[code] || code
       Currency.find_by_code(code)
@@ -96,39 +133,16 @@ module Stocks
       serialize_currency_code(code)
     end
 
+    def pair_to_code(pair)
+      "#{currency_to_code(pair.base_currency)}_#{currency_to_code(pair.target_currency)}"
+    end
+
     def conversion_table
       {}
     end
 
     def serialize_currency_code(code)
       code
-    end
-
-    # ============= Helper methods =================
-
-    # generic
-    def with_cache(filename, &block)
-      cache = Rails.env.development?
-      if cache
-        path = "tmp/cache/#{self.class.name.demodulize.underscore}-#{filename}"
-        if File.exists?(path)
-          json = File.read(path)
-        else
-          json = yield
-          File.open(path, 'w+') { |f| f.write(json) }
-        end
-      else
-        json = memory_cache(filename, &block)
-      end
-      JSON.parse(json)
-    end
-
-    # generic
-    def memory_cache(filename)
-      @memory_cache ||= {}
-      res = @memory_cache[filename]
-      res = @memory_cache[filename] = yield unless res
-      res
     end
   end
 end

@@ -11,36 +11,28 @@
 module Stocks
   class Yobit < Base
     def pairs
-      info['pairs'].keys
+      json = File.read('db/yobit-pairs.json')
+      JSON.parse(json)['pairs']
     end
 
-    def info
-      @info ||= with_cache('info.json') { get('info') }
+    def download_order_books(pairs = nil)
+      pairs ||= valid_pairs
+      code = pairs.map(&:underscored_code).join('-')
+      hash = get("depth/#{code}")
+      pairs.map do |pair|
+        data = hash[pair.underscored_code]
+        [pair, data] if data
+      end.compact.to_h
     end
 
-    def get_glass_impl(vector)
-      pair_code = "#{vector.target_code}_#{vector.base_code}"
-      hash =
-          with_cache("depth-#{pair_code}.json") do
-            get "depth/#{pair_code}"
-          end
-      part = vector.sell? ? 'bids' : 'asks'
-      hash[pair_code][part]
-    end
-
-    def preload_glasses
-      hash = JSON.parse(get("depth/#{valid_pairs.map(&:underscored_code).join('-')}"))
-      @memory_cache ||= {}
-      valid_pairs.each do |pair|
-        key = "depth-#{pair}.json"
-        @memory_cache[key] = hash.slice(pair).to_json
-      end
-    end
-
-    def get(path)
+    def get_raw(path)
       puts "sending request to #{path}"
       response = RestClient.get "https://yobit.net/api/3/#{path}"
       response.body
+    end
+
+    def get(path)
+      JSON.parse(get_raw(path))
     end
 
     # noinspection RubyStringKeysInHashInspection
@@ -50,13 +42,13 @@ module Stocks
 
 
     module NotUsed
-      def clear_cache
-        FileUtils.rm_rf Dir.glob('cache/*')
+      def info
+        @info ||= get('info')
       end
 
       # yobit specific
       def ticker
-        @ticker ||= with_cache('ticker.json') { get("ticker/#{valid_pairs.join('-')}") }
+        @ticker ||= get("ticker/#{valid_pairs.join('-')}")
       end
 
       def valid_pairs_info
@@ -90,6 +82,11 @@ module Stocks
             [currency, nil]
           end
         end.to_h
+      end
+
+      def get_pairs
+        data = {pairs: info['pairs'].keys}
+        File.open('db/yobit-pairs.json', 'w') { |f| f.write(data.to_json) }
       end
     end
   end

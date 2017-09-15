@@ -1,0 +1,11 @@
+- if flash.notice
+  .alert.alert-success
+    = flash.notice
+
+= simple_form_for '', url: refresh_glasses_commands_path do |f|
+  = f.input :stock_code, as: :hidden, input_html: { :value => 'Yobit'}
+  = f.button :submit, 'Обновить Yobit'
+br
+= simple_form_for '', url: refresh_glasses_commands_path do |f|
+  = f.input :stock_code, as: :hidden, input_html: { :value => 'Poloniex'}
+  = f.button :submit, 'Обновить Poloniex'
