@@ -43,6 +43,11 @@ module Stocks
       response.body
     end
 
+    # noinspection RubyStringKeysInHashInspection
+    def conversion_table
+      {'omg' => 'omgame'}
+    end
+
 
     module NotUsed
       def clear_cache

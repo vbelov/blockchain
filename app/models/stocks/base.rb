@@ -5,8 +5,8 @@ module Stocks
           pairs.map do |pair|
             code1, code2 = pair.split('_').map(&:downcase)
             next unless code2 == 'btc'
-            c1 = Currency.find_by_code(code1)
-            c2 = Currency.find_by_code(code2)
+            c1 = currency_by_code(code1)
+            c2 = currency_by_code(code2)
             if c1 && c2
               Pair.new(
                   target_currency: c1,
@@ -83,6 +83,25 @@ module Stocks
     end
 
     def preload_glasses
+    end
+
+    def currency_by_code(code)
+      code = conversion_table[code] || code
+      Currency.find_by_code(code)
+    end
+
+    def currency_to_code(currency)
+      table = conversion_table.to_a.map(&:reverse).to_h
+      code = table[currency.code] || currency.code
+      serialize_currency_code(code)
+    end
+
+    def conversion_table
+      {}
+    end
+
+    def serialize_currency_code(code)
+      code
     end
 
     # ============= Helper methods =================

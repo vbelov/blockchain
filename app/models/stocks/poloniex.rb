@@ -1,7 +1,7 @@
 module Stocks
   class Poloniex < Base
     def get_glass_impl(vector)
-      pair_code = "#{vector.base_CODE}_#{vector.target_CODE}"
+      pair_code = "#{currency_to_code(vector.base_currency)}_#{currency_to_code(vector.target_currency)}"
 
       hash =
           with_cache("depth-#{pair_code}.json") do
@@ -25,6 +25,15 @@ module Stocks
 
     def get(options)
       JSON.parse(get_raw(options))
+    end
+
+    # noinspection RubyStringKeysInHashInspection
+    def conversion_table
+      {'bch' => 'bcc'}
+    end
+
+    def serialize_currency_code(code)
+      code.upcase
     end
 
 
