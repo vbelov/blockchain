@@ -32,7 +32,19 @@ class Pair
   end
 
   def <=>(other)
-    slashed_code <=> other.slashed_code
+    underscored_code <=> other.underscored_code
+  end
+
+  def ==(other)
+    other.kind_of?(self.class) && underscored_code == other.underscored_code
+  end
+
+  def eql?(other)
+    other.instance_of?(self.class) && underscored_code == other.underscored_code
+  end
+
+  def hash
+    underscored_code.to_sym.object_id
   end
 
   class << self

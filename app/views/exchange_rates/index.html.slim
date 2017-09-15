@@ -4,6 +4,10 @@
   = f.input :volume, as: :numeric, label: 'Объем', input_html: {value: volume}, autofocus: true
   = f.button :submit, 'Обновить'
 
+br
+- @messages.each do |message|
+  .alert.alert-success= message
+
 table.table.table-striped
   thead
     tr
@@ -16,5 +20,5 @@ table.table.table-striped
       tr
         td= row.stock
         td= row.pair.slashed_code
-        td= fr(row.buy_rate)
-        td= fr(row.sell_rate)
+        td class=highlight_arbitrage(row, :buy) = fr(row.buy_rate)
+        td class=highlight_arbitrage(row, :sell) = fr(row.sell_rate)
