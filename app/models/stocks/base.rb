@@ -34,6 +34,10 @@ module Stocks
       )
     end
 
+    def refresh_time
+      Glass.where(stock_code: stock_code).order(created_at: :desc).first&.created_at
+    end
+
     def find_or_fetch_glass(vector)
       glass = Glass.where(
           stock_code: stock_code,

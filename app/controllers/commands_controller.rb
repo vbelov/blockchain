@@ -1,4 +1,6 @@
 class CommandsController < ApplicationController
+  helper_method :stocks
+
   def index
   end
 
@@ -7,5 +9,11 @@ class CommandsController < ApplicationController
     Stocks.const_get(stock_code).new.refresh_glasses
     flash.notice = "#{stock_code}: данные успешно обновлены"
     redirect_to commands_path
+  end
+
+  private
+
+  def stocks
+    %w(Yobit Poloniex).map { |c| Stocks.const_get(c).new }
   end
 end

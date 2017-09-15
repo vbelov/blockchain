@@ -3,15 +3,27 @@ class PeriodicRefresher
     counter = 0
 
     loop do
-      my_sleep
-      puts 'updating yobit ...'
-      Stocks::Yobit.new.refresh_glasses
-      counter += 1
-      # break if counter == 1
+      begin
+        my_sleep
+        stocks.each do |stock|
+          puts "updating #{stock.stock_code} ..."
+          stock.refresh_glasses
+        end
+        counter += 1
+          # break if counter == 1
+      rescue => err
+        puts '===================  ERROR  ===================='
+        puts err.message
+        err.backtrace.each { |l| puts l }
+      end
     end
   end
 
   private
+
+  def stocks
+    %w(Yobit Poloniex).map { |c| Stocks.const_get(c).new }
+  end
 
   def my_sleep
     seconds = 60 - Time.now.sec
