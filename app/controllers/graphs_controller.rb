@@ -1,4 +1,5 @@
 class GraphsController < ApplicationController
+  include ActiveSupport::Benchmarkable
   helper_method :valid_pairs, :pair, :volume, :charts
 
   def index
@@ -9,7 +10,7 @@ class GraphsController < ApplicationController
   def charts
     @charts ||=
         begin
-          time = [1.day.ago, Time.parse('2017-09-15 17:00:00 +0300')].max
+          time = [6.hours.ago, Time.parse('2017-09-15 17:00:00 +0300')].max
           glasses = Glass.where(
               stock_code: stock_names,
               target_code: target_currency,
@@ -20,14 +21,16 @@ class GraphsController < ApplicationController
 
           stock_names.permutation(2).each do |pair_of_stocks|
             pair_of_actions = %i(sell buy)
-            buy_points, sell_points = 2.times.map do |idx|
-              stock_code = pair_of_stocks[idx]
-              action = pair_of_actions[idx]
-              stock = Stocks.const_get(stock_code).new
-              gg = glasses.select { |g| g.stock_code == stock_code }
-              gg.map do |glass|
-                res = stock.process_glass(glass, action, volume)
-                [glass.created_at, res.effective_rate]
+            buy_points, sell_points = benchmark("processing glasses for a pair of stocks") do
+              2.times.map do |idx|
+                stock_code = pair_of_stocks[idx]
+                action = pair_of_actions[idx]
+                stock = Stocks.const_get(stock_code).new
+                gg = glasses.select { |g| g.stock_code == stock_code }
+                gg.map do |glass|
+                  res = stock.process_glass(glass, action, volume)
+                  [glass.created_at, res.effective_rate]
+                end
               end
             end
 
@@ -37,29 +40,31 @@ class GraphsController < ApplicationController
             next_sell = sell_iterator.peek
             next_sell_at = next_sell[0]
 
-            points = buy_points.map do |point|
-              created_at = point[0]
-              while next_sell_at < created_at
-                begin
-                  prev_sell, next_sell = next_sell, sell_iterator.next
-                  prev_sell_at, next_sell_at = next_sell_at, next_sell[0]
-                rescue StopIteration
-                  prev_sell = next_sell
-                  prev_sell_at = next_sell_at
-                  break
+            points = benchmark 'calculating arbitrage' do
+              buy_points.map do |point|
+                created_at = point[0]
+                while next_sell_at < created_at
+                  begin
+                    prev_sell, next_sell = next_sell, sell_iterator.next
+                    prev_sell_at, next_sell_at = next_sell_at, next_sell[0]
+                  rescue StopIteration
+                    prev_sell = next_sell
+                    prev_sell_at = next_sell_at
+                    break
+                  end
                 end
+                if next_sell_at >= created_at
+                  take_next = (created_at - prev_sell_at) > (next_sell_at - created_at)
+                  # dt = [(created_at - prev_sell_at).abs, (next_sell_at - created_at).abs].min
+                  # puts "dt: #{dt}"
+                  sell = take_next ? next_sell : prev_sell
+                else
+                  sell = prev_sell
+                end
+                buy_price = point[1]
+                sell_price = sell[1]
+                [created_at, (buy_price / sell_price - 1) * 100.0]
               end
-              if next_sell_at >= created_at
-                take_next = (created_at - prev_sell_at) > (next_sell_at - created_at)
-                # dt = [(created_at - prev_sell_at).abs, (next_sell_at - created_at).abs].min
-                # puts "dt: #{dt}"
-                sell = take_next ? next_sell : prev_sell
-              else
-                sell = prev_sell
-              end
-              buy_price = point[1]
-              sell_price = sell[1]
-              [created_at, (buy_price / sell_price - 1) * 100.0]
             end
             title = "Покупка на #{pair_of_stocks[1]}, продажа на #{pair_of_stocks[0]}"
             arr << {title: title, chart_data: points}
