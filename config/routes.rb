@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  devise_for :users
   root to: 'exchange_rates#index'
 
   resources :exchange_rates, only: :index

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Blockchain</title>
+    <title>Реактивная тяга уретры</title>
     <%= csrf_meta_tags %>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -37,6 +37,9 @@
             <% end %>
             <%= content_tag :li, class: (controller_name == 'graphs' ? 'active' : '') do %>
                 <%= link_to 'Динамика', graphs_path %>
+            <% end %>
+            <%= content_tag :li do %>
+                <%= link_to 'Выйти', destroy_user_session_path, method: :delete %>
             <% end %>
           </ul>
         </div><!-- /.navbar-collapse -->
