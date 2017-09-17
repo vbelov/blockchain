@@ -10,7 +10,7 @@ class GraphsController < ApplicationController
   def charts
     @charts ||=
         begin
-          time = [6.hours.ago, Time.parse('2017-09-15 17:00:00 +0300')].max
+          time = [24.hours.ago, Time.parse('2017-09-15 17:00:00 +0300')].max
           glasses = Glass.where(
               stock_code: stock_names,
               target_code: target_currency,
@@ -28,8 +28,8 @@ class GraphsController < ApplicationController
                 stock = Stocks.const_get(stock_code).new
                 gg = glasses.select { |g| g.stock_code == stock_code }
                 gg.map do |glass|
-                  res = stock.process_glass(glass, action, volume)
-                  [glass.created_at, res.effective_rate]
+                  rate = stock.process_glass_fast(glass, action, volume)
+                  [glass.created_at, rate]
                 end
               end
             end

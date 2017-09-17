@@ -91,6 +91,28 @@ module Stocks
       process_orders(orders, amount)
     end
 
+    def process_glass_fast(glass, action, amount)
+      json = glass.send("#{action}_orders")
+      raw_orders = JSON.parse(json)
+
+      base_volume = amount
+      target_volume = 0
+      raw_orders.take_while do |rate, order_target_volume|
+        rate = rate.to_f
+        order_base_volume = order_target_volume * rate
+        if base_volume >= order_base_volume
+          base_volume -= order_base_volume
+          target_volume += order_target_volume
+          true
+        else
+          target_volume += base_volume / rate
+          base_volume = 0
+          false
+        end
+      end
+      amount / target_volume
+    end
+
     def process_vector(vector, amount)
       orders = get_orders(vector)
       process_orders(orders, amount)
