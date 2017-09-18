@@ -11,7 +11,7 @@ class GlassesController < ApplicationController
   private
 
   def stock_names
-    %w(Yobit Poloniex)
+    Stock.all
   end
 
   def stock_name

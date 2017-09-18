@@ -33,6 +33,11 @@ class GraphsController < ApplicationController
                 end
               end
             end
+            first_buy_at = buy_points.first[0]
+            first_sell_at = sell_points.first[0]
+            first_at = [first_buy_at, first_sell_at].max
+            buy_points.select! { |p| p[0] >= first_at }
+            sell_points.select! { |p| p[0] >= first_at }
 
             sell_iterator = sell_points.to_enum
             prev_sell = sell_iterator.next
@@ -115,7 +120,7 @@ class GraphsController < ApplicationController
   # end
 
   def stock_names
-    %w(Yobit Poloniex)
+    Stock.all
   end
 
   def vector

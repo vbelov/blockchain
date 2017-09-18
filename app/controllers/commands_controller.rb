@@ -14,6 +14,6 @@ class CommandsController < ApplicationController
   private
 
   def stocks
-    %w(Yobit Poloniex).map { |c| Stocks.const_get(c).new }
+    Stock.all.map { |c| Stocks.const_get(c).new }
   end
 end

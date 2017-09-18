@@ -30,6 +30,10 @@ module Stocks
       {'bch' => 'bcc'}
     end
 
+    def pair_to_code(pair)
+      "#{currency_to_code(pair.base_currency)}_#{currency_to_code(pair.target_currency)}"
+    end
+
     def serialize_currency_code(code)
       code.upcase
     end

@@ -177,7 +177,7 @@ module Stocks
     end
 
     def pair_to_code(pair)
-      "#{currency_to_code(pair.base_currency)}_#{currency_to_code(pair.target_currency)}"
+      "#{currency_to_code(pair.target_currency)}_#{currency_to_code(pair.base_currency)}"
     end
 
     def conversion_table

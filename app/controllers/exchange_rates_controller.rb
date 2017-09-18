@@ -27,7 +27,7 @@ class ExchangeRatesController < ApplicationController
   private
 
   def stock_names
-    %w(Yobit Poloniex)
+    Stock.all
   end
 
   def stock_name
@@ -36,7 +36,7 @@ class ExchangeRatesController < ApplicationController
 
   def stocks
     @stocks ||=
-        Array.wrap(stock_name || %w(Yobit Poloniex)).map do |name|
+        Array.wrap(stock_name || Stock.all).map do |name|
           Stocks.const_get(name).new
         end
   end
