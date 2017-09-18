@@ -12,11 +12,13 @@ class ExchangeRatesController < ApplicationController
     @rows.group_by(&:pair).each do |pair, ers|
       ers.permutation(2).each do |er1, er2|
         if er1.buy_rate < er2.sell_rate
-          er1.add_arbitrage_on(:buy)
-          er2.add_arbitrage_on(:sell)
           arbitrage = ((er2.sell_rate / er1.buy_rate - 1) * 100.0).round(2)
-          f = ->(number) { ActiveSupport::NumberHelper.number_to_rounded(number, precision: 8) }
-          @messages << "#{pair.slashed_code}: Buy on #{er1.stock} for #{f.(er1.buy_rate)} and sell on #{er2.stock} for #{f.(er2.sell_rate)}. Arbitrage: #{arbitrage} %"
+          if arbitrage > 1
+            er1.add_arbitrage_on(:buy)
+            er2.add_arbitrage_on(:sell)
+            f = ->(number) { ActiveSupport::NumberHelper.number_to_rounded(number, precision: 8) }
+            @messages << "#{pair.slashed_code}: Buy on #{er1.stock} for #{f.(er1.buy_rate)} and sell on #{er2.stock} for #{f.(er2.sell_rate)}. Arbitrage: #{arbitrage} %"
+          end
         end
       end
     end
