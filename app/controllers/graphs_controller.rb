@@ -39,6 +39,8 @@ class GraphsController < ApplicationController
             buy_points.select! { |p| p[0] >= first_at }
             sell_points.select! { |p| p[0] >= first_at }
 
+            next unless buy_points.any? && sell_points.any?
+
             sell_iterator = sell_points.to_enum
             prev_sell = sell_iterator.next
             prev_sell_at = prev_sell[0]
