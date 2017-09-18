@@ -25,11 +25,6 @@ module Stocks
       JSON.parse(get_raw(options))
     end
 
-    # noinspection RubyStringKeysInHashInspection
-    def conversion_table
-      {'bch' => 'bcc'}
-    end
-
     def pair_to_code(pair)
       "#{currency_to_code(pair.base_currency)}_#{currency_to_code(pair.target_currency)}"
     end

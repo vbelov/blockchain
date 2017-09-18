@@ -37,7 +37,7 @@ module Stocks
 
     # noinspection RubyStringKeysInHashInspection
     def conversion_table
-      {'omg' => 'omgame'}
+      {'omg' => 'omgame', 'bcc' => 'bch'}
     end
 
 
