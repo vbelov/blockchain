@@ -3,7 +3,9 @@ class CreateArbitragePeriods
     ArbitragePeriod.delete_all
     ArbitragePoint.delete_all
 
-    Pair.active.each { |pair| process_pair(pair) }
+    ActiveRecord::Base.logger.silence do
+      Pair.active.each { |pair| process_pair(pair) }
+    end
     true
   end
 
