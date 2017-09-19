@@ -9,5 +9,7 @@ Rails.application.routes.draw do
       post :refresh_glasses
     end
   end
-  resources :graphs, only: :index
+  namespace :graphs do
+    resource :arbitrage, only: :show
+  end
 end

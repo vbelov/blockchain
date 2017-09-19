@@ -35,8 +35,8 @@
             <%= content_tag :li, class: (controller_name == 'commands' ? 'active' : '') do %>
                 <%= link_to 'Операции', commands_path %>
             <% end %>
-            <%= content_tag :li, class: (controller_name == 'graphs' ? 'active' : '') do %>
-                <%= link_to 'Динамика', graphs_path %>
+            <%= content_tag :li, class: (controller_path =~ /graphs/ ? 'active' : '') do %>
+                <%= link_to 'Графики', graphs_arbitrage_path %>
             <% end %>
             <%= content_tag :li do %>
                 <%= link_to 'Выйти', destroy_user_session_path, method: :delete %>
