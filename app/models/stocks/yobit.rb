@@ -17,10 +17,11 @@ module Stocks
 
     def download_order_books(pairs = nil)
       pairs ||= valid_pairs
-      code = pairs.map(&:underscored_code).join('-')
+      code = pairs.map { |p| pair_to_code(p) }.join('-')
       hash = get("depth/#{code}")
       pairs.map do |pair|
-        data = hash[pair.underscored_code]
+        code = pair_to_code(pair)
+        data = hash[code]
         [pair, data] if data
       end.compact.to_h
     end
