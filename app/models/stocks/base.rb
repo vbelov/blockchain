@@ -1,5 +1,7 @@
 module Stocks
   class Base
+    mattr_reader(:max_glass_volume) { 5 }
+
     def stock_code
       self.class.name.demodulize
     end
@@ -29,12 +31,24 @@ module Stocks
       time = now.at_beginning_of_minute
       time = time + 1.minute if now.sec > 30
 
+      bids, asks = %w(bids asks).map do |a|
+        base_volume = 0
+        orders_to_keep = pair_data[a].take_while do |rate, order_target_volume|
+          rate = rate.to_f
+          res = base_volume < max_glass_volume
+          base_volume += rate * order_target_volume
+          res
+        end
+
+        orders_to_keep.map { |r| [r[0].to_f, r[1].to_f] }
+      end
+
       Glass.create!(
           stock_code: stock_code,
           target_code: pair.target_code,
           base_code: pair.base_code,
-          sell_orders: pair_data['bids'].to_json,
-          buy_orders: pair_data['asks'].to_json,
+          sell_orders: bids.to_json,
+          buy_orders: asks.to_json,
           time: time,
       )
     end
@@ -103,7 +117,6 @@ module Stocks
       base_volume = amount
       target_volume = 0
       raw_orders.take_while do |rate, order_target_volume|
-        rate = rate.to_f
         order_base_volume = order_target_volume * rate
         if base_volume >= order_base_volume
           base_volume -= order_base_volume
