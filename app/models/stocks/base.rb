@@ -25,12 +25,17 @@ module Stocks
     end
 
     def save_glass(pair, pair_data)
+      now = Time.now
+      time = now.at_beginning_of_minute
+      time = time + 1.minute if now.sec > 30
+
       Glass.create!(
           stock_code: stock_code,
           target_code: pair.target_code,
           base_code: pair.base_code,
           sell_orders: pair_data['bids'].to_json,
           buy_orders: pair_data['asks'].to_json,
+          time: time,
       )
     end
 
