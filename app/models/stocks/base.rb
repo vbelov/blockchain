@@ -113,6 +113,7 @@ module Stocks
     def process_glass_fast(glass, action, amount)
       json = glass.send("#{action}_orders")
       raw_orders = JSON.parse(json)
+      return raw_orders.first[0] if amount == 0
 
       base_volume = amount
       target_volume = 0
@@ -152,14 +153,15 @@ module Stocks
           order.used = :partial
           false
         end
-      end
+      end if amount > 0
       error = base_volume == 0 ? nil : "Недостаточный объем сделок: #{amount - base_volume} < #{amount}"
 
+      rate = amount > 0 ? amount / target_volume : orders.first.rate
       OpenStruct.new(
           orders: orders,
           target_volume: target_volume,
           error: error,
-          effective_rate: amount / target_volume,
+          effective_rate: rate,
       )
     end
 
