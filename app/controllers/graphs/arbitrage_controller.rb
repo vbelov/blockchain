@@ -71,46 +71,6 @@ module Graphs
           end
     end
 
-    # def charts
-    #   @charts ||=
-    #       begin
-    #         glasses = Glass.where(
-    #             stock_code: stock_names,
-    #             target_code: target_currency,
-    #             base_code: base_currency,
-    #         ).order(:time).to_a
-    #
-    #         arr = []
-    #
-    #         stock_names.combination(2).each do |pair_of_stocks|
-    #           %i(buy sell).permutation(2).each do |pair_of_actions|
-    #             arr << 2.times.map do |idx|
-    #               stock_code = pair_of_stocks[idx]
-    #               action = pair_of_actions[idx]
-    #               stock = Stocks.const_get(stock_code).new
-    #               gg = glasses.select { |g| g.stock_code == stock_code }
-    #               chart_data = gg.map do |glass|
-    #                 res = stock.aaa(glass, action, volume)
-    #                 [glass.time, res.effective_rate]
-    #               end
-    #
-    #               {name: "#{stock_code} #{action}", data: chart_data}
-    #             end
-    #           end
-    #         end
-    #
-    #         arr
-    #       end
-    # end
-
-    # def min(chart)
-    #   chart.flat_map { |h| h[:data].map(&:last) }.min * 0.98
-    # end
-    #
-    # def max(chart)
-    #   chart.flat_map { |h| h[:data].map(&:last) }.max * 1.02
-    # end
-
     def stock_names
       Stock.all
     end

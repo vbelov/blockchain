@@ -55,5 +55,9 @@ class Pair
           base_currency: Currency.find_by_code(c2),
       )
     end
+
+    def active
+      Stock.all.flat_map { |code| Stocks.const_get(code).new.valid_pairs }.uniq
+    end
   end
 end

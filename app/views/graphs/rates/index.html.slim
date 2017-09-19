@@ -1,0 +1,22 @@
+= render partial: 'graphs/navigation'
+
+br
+
+= simple_form_for '', url: '', method: :get, html: { class: 'form-inline' }, wrapper: :inline_form do |f|
+  = f.input :pair, collection: pair_codes, label: 'Пара', selected: pair, autofocus: true
+  = f.input :volume, as: :numeric, label: 'Объем', input_html: {value: volume}
+  .form-group
+    label.control-label Группировка
+    .btn-group data-toggle="buttons"
+      - group_by_options.each do |key, name|
+        - checked = group_by == key
+        label.btn.btn-default class=(checked ? 'active' : '')
+          = radio_button_tag 'group_by', key || '', checked
+          = name
+  = f.button :submit, 'Загрузить'
+
+br
+
+- chart_groups.each do |group_name, charts|
+  strong= group_name
+  = line_chart charts, min: min(group_name), max: max(group_name)

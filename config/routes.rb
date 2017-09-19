@@ -11,5 +11,6 @@ Rails.application.routes.draw do
   end
   namespace :graphs do
     resource :arbitrage, only: :show
+    resources :rates, only: :index
   end
 end

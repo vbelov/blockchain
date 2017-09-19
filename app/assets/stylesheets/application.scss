@@ -11,7 +11,7 @@ form.form-inline {
   div.form-group {
     margin-right: 20px;
   }
-  label {
+  label:not(.btn) {
     margin-right: 10px;
   }
 }
