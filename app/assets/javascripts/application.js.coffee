@@ -20,6 +20,9 @@
 #= require highcharts
 #= require chartkick
 
+#= require moment
+#= require bootstrap-sortable
+
 Highcharts.setOptions({
   global: {
     useUTC: false

@@ -129,7 +129,7 @@ module Stocks
           false
         end
       end
-      amount / target_volume
+      base_volume == 0 ? amount / target_volume : nil
     end
 
     def process_vector(vector, amount)

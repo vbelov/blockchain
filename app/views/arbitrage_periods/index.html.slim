@@ -1,0 +1,32 @@
+.alert.alert-warning
+  | Праздником считается период времени, когда есть положительный арбитраж на нулевом объеме.
+  |  Доход - максимальный доход в BTC, который можно получить от сделки в этот период.
+  |  Объем (в BTC) - объем инвестиций для получения максимального дохода
+  |  (на самом деле это половина необходимого объема, т.к. мы предполагаем встречную сделку).
+  |  Прибыльность (в процентах) также считается для сделки с максимальным доходом.
+  |  Пока используется простейший алгоритм, не учитывающий комиссий.
+  |  В режиме реального времени эти данные пока не обновляются.
+  |  Отображается 100 праздников с наибольшим Доходом за все время сбора данных.
+
+table.table.sortable
+  thead
+    tr
+      th Биржи
+      th Пара
+      th data-firstsort="desc" Начало
+      th data-firstsort="desc" Длительность
+      th data-firstsort="desc" Доход
+      th data-firstsort="desc" Объем
+      th data-firstsort="desc" Прибыльность
+      th
+  tbody
+    - @periods.each do |period|
+      tr
+        td= period.stock_pair_code
+        td= period.pair_code
+        td= period.started_at.to_s(:short)
+        td data-value=period.duration = "#{(period.duration / 60).to_i} мин"
+        td= period.max_revenue&.round(4)
+        td= period.volume
+        td= (period.max_arbitrage.to_f * 100.0).round(1)
+        td= link_to 'Подробнее', arbitrage_period_path(period)

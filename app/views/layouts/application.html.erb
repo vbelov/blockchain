@@ -32,6 +32,9 @@
             <%= content_tag :li, class: (controller_name == 'glasses' ? 'active' : '') do %>
                 <%= link_to 'Стакан', glasses_path %>
             <% end %>
+            <%= content_tag :li, class: (controller_name == 'arbitrage_periods' ? 'active' : '') do %>
+                <%= link_to 'Праздники', arbitrage_periods_path %>
+            <% end %>
             <%= content_tag :li, class: (controller_name == 'commands' ? 'active' : '') do %>
                 <%= link_to 'Операции', commands_path %>
             <% end %>

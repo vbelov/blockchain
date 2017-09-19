@@ -10,10 +10,34 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170919074219) do
+ActiveRecord::Schema.define(version: 20170919192716) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "arbitrage_periods", force: :cascade do |t|
+    t.string "buy_stock_code"
+    t.string "sell_stock_code"
+    t.string "target_code"
+    t.string "base_code"
+    t.datetime "started_at"
+    t.datetime "finished_at"
+    t.integer "duration"
+    t.float "max_revenue"
+    t.float "volume"
+    t.float "max_arbitrage"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "arbitrage_points", force: :cascade do |t|
+    t.integer "arbitrage_period_id"
+    t.datetime "time"
+    t.float "max_revenue"
+    t.float "volume"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "glasses", force: :cascade do |t|
     t.string "stock_code"

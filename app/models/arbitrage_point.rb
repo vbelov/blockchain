@@ -1,0 +1,2 @@
+class ArbitragePoint < ApplicationRecord
+end

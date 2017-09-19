@@ -13,4 +13,6 @@ Rails.application.routes.draw do
     resource :arbitrage, only: :show
     resources :rates, only: :index
   end
+  resources :arbitrage_periods, only: [:index, :show]
+  resources :arbitrage_points, only: :show
 end
