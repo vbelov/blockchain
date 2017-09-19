@@ -1,6 +1,6 @@
 = simple_form_for :exchange_rates, url: exchange_rates_path, method: :get, html: { class: 'form-inline' }, wrapper: :inline_form do |f|
   = f.input :stock_name, collection: stock_names, label: 'Биржа', selected: stock_name, include_blank: 'Все'
-  = f.input :pair, collection: list_of_pairs, label: 'Пара', selected: pair
+  = f.input :pair, collection: list_of_pairs, label: 'Пара', selected: selected_pair
   = f.input :volume, as: :numeric, label: 'Объем', input_html: {value: volume}, autofocus: true
   = f.button :submit, 'Обновить'
 
@@ -8,17 +8,25 @@ br
 - @messages.each do |message|
   .alert.alert-success= message
 
-table.table.table-striped
+table.table
   thead
     tr
-      th Биржа
-      th Пара
+      - if stock_name
+        th Пара
+      - else
+        th Биржа
       th Цена покупки
       th Цена продажи
   tbody
-    - @rows.each do |row|
-      tr
-        td= row.stock
-        td= row.pair.slashed_code
-        td class=highlight_arbitrage(row, :buy) = fr(row.buy_rate)
-        td class=highlight_arbitrage(row, :sell) = fr(row.sell_rate)
+    - @rates_by_pair.each do |pair, ers|
+      - unless selected_pair || stock_name
+        tr.active
+          th colspan=3 = pair.slashed_code
+      - ers.each do |er|
+        tr
+          - if stock_name
+            td= er.pair.slashed_code
+          - else
+            td= er.stock
+          td class=highlight_arbitrage(er, :buy) = fr(er.buy_rate)
+          td class=highlight_arbitrage(er, :sell) = fr(er.sell_rate)

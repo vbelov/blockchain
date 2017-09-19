@@ -1,15 +1,15 @@
 class ExchangeRatesController < ApplicationController
   helper_method :volume,
                 :stock_names, :stock_name,
-                :valid_pairs, :list_of_pairs, :pair
+                :valid_pairs, :list_of_pairs, :selected_pair
 
   def index
-    @rows =
-        stocks.flat_map do |stock|
-          stock.current_exchange_rates(Currency.btc, volume, pairs: pair && [pair])
-        end
+    rates = stocks.flat_map do |stock|
+      stock.current_exchange_rates(Currency.btc, volume, pairs: selected_pair && [selected_pair])
+    end
     @messages = []
-    @rows.group_by(&:pair).each do |pair, ers|
+    @rates_by_pair = rates.group_by(&:pair).to_a.sort_by { |pair, ers| pair.slashed_code }.to_h
+    @rates_by_pair.each do |pair, ers|
       ers.permutation(2).each do |er1, er2|
         if er1.buy_rate < er2.sell_rate
           arbitrage = ((er2.sell_rate / er1.buy_rate - 1) * 100.0).round(2)
@@ -22,8 +22,6 @@ class ExchangeRatesController < ApplicationController
         end
       end
     end
-
-    @rows.sort_by! { |er| er.pair.slashed_code }
   end
 
   private
@@ -51,7 +49,7 @@ class ExchangeRatesController < ApplicationController
     ['Все'] + valid_pairs
   end
 
-  def pair
+  def selected_pair
     _pair = exchange_rates_params[:pair]
     if _pair.blank? || _pair == 'Все'
       nil
