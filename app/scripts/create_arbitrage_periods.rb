@@ -4,7 +4,9 @@ class CreateArbitragePeriods
     ArbitragePoint.delete_all
 
     ActiveRecord::Base.logger.silence do
-      Pair.active.each { |pair| process_pair(pair) }
+      pairs = Pair.active
+      # pairs = [Pair.find_by_code('XEM / BTC')]
+      pairs.each { |pair| process_pair(pair) }
     end
     true
   end
@@ -85,7 +87,7 @@ class CreateArbitragePeriods
           finished_at = period_points.last[0]
           duration = (finished_at - period_started_at).to_i
 
-          periods << ArbitragePeriod.create!(
+          periods << ArbitragePeriod.new(
               buy_stock_code: buy_stock,
               sell_stock_code: sell_stock,
               target_code: pair.target_code,
@@ -128,8 +130,6 @@ class CreateArbitragePeriods
         time: time_range,
     ).to_a.index_by(&:time)
 
-    volumes = 500.times.map { |i| (i + 1).to_f * 0.01 }
-
     period_max_revenue = 0
     period_volume = 0
 
@@ -138,31 +138,22 @@ class CreateArbitragePeriods
       buy_glass = buy_glasses[time]
       sell_glass = sell_glasses[time]
       if buy_glass && sell_glass
-        max_revenue = 0
-        volume_for_max_revenue = nil
-
-        volumes.map do |volume|
-          buy_rate = buy_stock.process_glass_fast(buy_glass, :buy, volume)
-          sell_rate = sell_stock.process_glass_fast(sell_glass, :sell, volume)
-
-          if sell_rate && buy_rate
-            arbitrage = (sell_rate / buy_rate - 1)
-            revenue = arbitrage * volume
-
-            if revenue > max_revenue
-              max_revenue = revenue
-              volume_for_max_revenue = volume
-            end
-          end
-        end
+        calculator = Calculator.new(
+            buy_stock: buy_stock,
+            sell_stock: sell_stock,
+            target_code: period.target_code,
+            base_code: period.base_code,
+            buy_glass: buy_glass,
+            sell_glass: sell_glass,
+        )
+        volume_for_max_revenue, max_revenue = calculator.calc_optimal
 
         if max_revenue > period_max_revenue
           period_max_revenue = max_revenue
           period_volume = volume_for_max_revenue
         end
 
-        ArbitragePoint.create!(
-            arbitrage_period_id: period.id,
+        period.arbitrage_points.build(
             time: time,
             max_revenue: max_revenue,
             volume: volume_for_max_revenue,
@@ -172,10 +163,12 @@ class CreateArbitragePeriods
       time += 1.minute
     end
 
-    period.update!(
-        max_revenue: period_max_revenue,
-        volume: period_volume,
-        max_arbitrage: period_volume > 0 ? period_max_revenue / period_volume : 0,
-    )
+    if period_volume > 0
+      period.update!(
+          max_revenue: period_max_revenue,
+          volume: period_volume,
+          max_arbitrage: period_volume > 0 ? period_max_revenue / period_volume : 0,
+      )
+    end
   end
 end

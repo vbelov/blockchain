@@ -1,2 +1,19 @@
-= line_chart @arbitrage_chart
+table.table.table-bordered
+  tbody
+    tr
+      th Максимальная прибыль
+      td #{ef(@optimal_revenue)} BTC
+      th Объем
+      td #{ef(@optimal_volume)} BTC
+
+strong Зависимость прибыли от объема
 = line_chart @revenue_chart
+
+br
+
+strong Зависимость доходности от объема
+= line_chart @arbitrage_chart
+
+h3 Инструкция
+
+= render partial: 'arbitrage_points/instruction', locals: @instruction_data

@@ -117,6 +117,8 @@ GEM
     mime-types-data (3.2016.0521)
     mini_mime (0.1.4)
     mini_portile2 (2.2.0)
+    minimization (0.2.3)
+      text-table (~> 1.2)
     minitest (5.10.3)
     momentjs-rails (2.17.1)
       railties (>= 3.1)
@@ -203,6 +205,7 @@ GEM
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
     temple (0.8.0)
+    text-table (1.2.4)
     thor (0.20.0)
     thread_safe (0.3.6)
     tilt (2.0.8)
@@ -249,6 +252,7 @@ DEPENDENCIES
   jbuilder (~> 2.5)
   jquery-rails
   listen (>= 3.0.5, < 3.2)
+  minimization
   momentjs-rails
   pg
   puma (~> 3.7)

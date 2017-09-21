@@ -132,6 +132,27 @@ module Stocks
       base_volume == 0 ? amount / target_volume : nil
     end
 
+    def sell_target(glass, target_amount)
+      json = glass.sell_orders
+      raw_orders = JSON.parse(json)
+
+      base_volume = 0
+      target_volume = target_amount
+      raw_orders.take_while do |rate, order_target_volume|
+        order_base_volume = order_target_volume * rate
+        if target_volume > order_target_volume
+          target_volume -= order_target_volume
+          base_volume += order_base_volume
+          true
+        else
+          base_volume += target_volume * rate
+          target_volume = 0
+          false
+        end
+      end
+      target_volume == 0 ? base_volume : nil
+    end
+
     def process_vector(vector, amount)
       orders = get_orders(vector)
       process_orders(orders, amount)

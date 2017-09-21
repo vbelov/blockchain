@@ -1,0 +1,125 @@
+table.table
+  thead
+    tr
+      th
+      th= sell_stock_code
+      th= buy_stock_code
+  tbody
+    tr
+      th= target_code
+      td= ef(q_x_a)
+      td
+    tr
+      th= base_code
+      td
+      td= ef(q_y_b)
+    tr
+      th Курс
+      td продажа за #{ef(sell_rate)}
+      td покупка за #{ef(buy_rate)}
+    tr
+      th Комиссия за сделку
+      td продажа: #{fee_sell}%
+      td покупка: #{fee_buy}%
+    tr
+      th Комиссия за вывод
+      td #{withdrawal_fee_sell_base} #{base_code}
+      td #{withdrawal_fee_buy_target} #{target_code}
+
+p На #{sell_stock_code} продаем #{ef(q_x_a)} #{target_code} по курсу #{ef(sell_rate)}, получаем #{ef(q_y_a)} #{base_code}
+
+table.table
+  thead
+    tr
+      th
+      th= sell_stock_code
+      th= buy_stock_code
+  tbody
+    tr
+      th= target_code
+      td
+      td
+    tr
+      th= base_code
+      td= ef(q_y_a)
+      td= ef(q_y_b)
+
+p На #{buy_stock_code} покупаем #{ef(q_x_b)} #{target_code} по курсу #{ef(buy_rate)}, получаем #{ef(q_x_b)} #{target_code}
+
+table.table
+  thead
+    tr
+      th
+      th= sell_stock_code
+      th= buy_stock_code
+  tbody
+    tr
+      th= target_code
+      td
+      td= ef(q_x_b)
+    tr
+      th= base_code
+      td= ef(q_y_a)
+      td
+
+p Переводим #{ef(q_y_a)} #{base_code} с #{sell_stock_code} на #{buy_stock_code}, потеряв на переводе #{withdrawal_fee_sell_base} #{base_code}
+
+table.table
+  thead
+    tr
+      th
+      th= sell_stock_code
+      th= buy_stock_code
+  tbody
+    tr
+      th= target_code
+      td
+      td= ef(q_x_b)
+    tr
+      th= base_code
+      td
+      td= ef(q_y_b_star)
+
+p Переводим #{ef(q_x_b)} #{target_code} с #{buy_stock_code} на #{sell_stock_code}, потеряв на переводе #{withdrawal_fee_buy_target} #{target_code}
+
+table.table
+  thead
+    tr
+      th
+      th= sell_stock_code
+      th= buy_stock_code
+  tbody
+    tr
+      th= target_code
+      td= ef(q_x_a_star)
+      td
+    tr
+      th= base_code
+      td
+      td= ef(q_y_b_star)
+
+p Сравниваем, что было до сделки и что сейчас
+
+table.table
+  thead
+    tr
+      th
+      th До
+      th После
+      th Изменение
+  tbody
+    tr
+      th= target_code
+      td= ef(q_x_a)
+      td= ef(q_x_a_star)
+      td= ef(target_delta)
+    tr
+      th= base_code
+      td= ef(q_y_b)
+      td= ef(q_y_b_star)
+      td= ef(base_delta)
+
+p
+  | #{ef(target_delta)} #{target_code} на #{sell_stock_code} можно продать и получить #{ef(target_delta_in_base)} #{base_code}
+  br
+  | В итоге чистая прибыль составит: #{ef(total_base_delta)} #{base_code}

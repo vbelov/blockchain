@@ -1,38 +1,44 @@
 class ArbitragePointsController < ApplicationController
+  helper_method :ef
+
   def show
-    period = ArbitragePeriod.find(params[:id])
-    buy_stock_code = period.buy_stock_code
-    sell_stock_code = period.sell_stock_code
-
-    buy_glass = Glass.find_by(
-        stock_code: buy_stock_code,
-        target_code: period.target_code,
-        base_code: period.base_code,
-        time: Time.at(params[:at].to_i),
-    )
-    sell_glass = Glass.find_by(
-        stock_code: sell_stock_code,
-        target_code: period.target_code,
-        base_code: period.base_code,
-        time: Time.at(params[:at].to_i),
-    )
-
-    buy_stock = Stocks.const_get(buy_stock_code).new
-    sell_stock = Stocks.const_get(sell_stock_code).new
-
-    volumes = 500.times.map { |i| (i + 1).to_f * 0.01 }
+    point = ArbitragePoint.find(params[:id])
+    args = point.arbitrage_period.attributes
+               .slice(*%w(buy_stock_code sell_stock_code base_code target_code))
+               .merge(time: point.time)
+    calculator = Calculator.new(args)
 
     @arbitrage_chart = []
     @revenue_chart = []
+
+    step = 0.01
+    max = calculator.max_volume
+    cnt = (max / step).to_i
+    volumes = cnt.times.map { |i| (i + 1).to_f * step }
     volumes.map do |volume|
-      buy_rate = buy_stock.process_glass_fast(buy_glass, :buy, volume)
-      sell_rate = sell_stock.process_glass_fast(sell_glass, :sell, volume)
-      if sell_rate && buy_rate
-        arbitrage = (sell_rate / buy_rate - 1)
-        if arbitrage > 0
-          @arbitrage_chart << [volume.round(2), arbitrage * 100]
-          @revenue_chart << [volume.round(2), arbitrage * volume]
-        end
+      revenue = calculator.get_proc.(volume)
+      if revenue > 0
+        arbitrage = revenue / volume
+        @arbitrage_chart << [volume.round(2), arbitrage * 100]
+        @revenue_chart << [volume.round(2), revenue]
+      end
+    end
+
+    @optimal_volume, @optimal_revenue = calculator.calc_optimal
+    @instruction_data = InstructionHelper.new(calculator).prepare(@optimal_volume)
+  end
+
+  private
+
+  def ef(val)
+    if val > 1
+      val.round(2)
+    else
+      cnt = Math.log10(val.abs).abs.to_i
+      if cnt
+        val.round(cnt + 4)
+      else
+        val
       end
     end
   end

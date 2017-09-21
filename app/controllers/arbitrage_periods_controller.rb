@@ -11,4 +11,10 @@ class ArbitragePeriodsController < ApplicationController
     @profit_chart = points.select(&:max_revenue).select(&:volume)
                         .map { |point| [point.time, point.max_revenue / point.volume * 100.0] }
   end
+
+  def best_point
+    period = ArbitragePeriod.find(params[:id])
+    point = period.arbitrage_points.max_by(&:max_revenue)
+    redirect_to point
+  end
 end

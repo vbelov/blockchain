@@ -4,7 +4,6 @@
   |  Объем (в BTC) - объем инвестиций для получения максимального дохода
   |  (на самом деле это половина необходимого объема, т.к. мы предполагаем встречную сделку).
   |  Прибыльность (в процентах) также считается для сделки с максимальным доходом.
-  |  Пока используется простейший алгоритм, не учитывающий комиссий.
   |  В режиме реального времени эти данные пока не обновляются.
   |  Отображается 100 праздников с наибольшим Доходом за все время сбора данных.
 
@@ -27,6 +26,7 @@ table.table.sortable
         td= period.started_at.to_s(:short)
         td data-value=period.duration = "#{(period.duration / 60).to_i} мин"
         td= period.max_revenue&.round(4)
-        td= period.volume
+        td= period.volume.round(3)
         td= (period.max_arbitrage.to_f * 100.0).round(1)
-        td= link_to 'Подробнее', arbitrage_period_path(period)
+        /td= link_to 'Подробнее', arbitrage_period_path(period)
+        td= link_to 'Опт. время', best_point_arbitrage_period_path(period)
