@@ -1,23 +1,16 @@
 module Stocks
   class Exmo < Base
-    def pairs
-      json = File.read('db/exmo-pairs.json')
-      JSON.parse(json)['pairs']
-    end
-
     def download_order_books(pairs = nil)
-      pairs ||= valid_pairs
-      code = pairs.map { |p| pair_to_code(p) }.join(',')
+      pairs ||= downloadable_pairs
+      code = pairs.map(&:api_code).join(',')
       hash = get(:order_book, pair: code)
-      pairs.map do |pair|
-        code = pair_to_code(pair)
+      pairs.map do |stock_pair|
+        code = stock_pair.api_code
         data = hash[code]
         if data
-          asks = data['ask'].map { |r| r.map(&:to_f) }
-          bids = data['bid'].map { |r| r.map(&:to_f) }
           # noinspection RubyStringKeysInHashInspection
-          data = {'asks' => asks, 'bids' => bids}
-          [pair, data]
+          data = {'asks' => data['ask'], 'bids' => data['bid']}
+          [stock_pair, data]
         end
       end.compact.to_h
     end
@@ -33,8 +26,8 @@ module Stocks
       JSON.parse(get_raw(action, params))
     end
 
-    def serialize_currency_code(code)
-      code.upcase
+    def serialize_pair(target_code, base_code)
+      "#{target_code.upcase}_#{base_code.upcase}"
     end
 
 

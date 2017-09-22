@@ -49,11 +49,17 @@ class Pair
 
   class << self
     def find_by_code(code)
-      c1, c2 = code.split(' / ')
-      Pair.new(
-          target_currency: Currency.find_by_code(c1),
-          base_currency: Currency.find_by_code(c2),
-      )
+      @all ||= {}
+      c1, c2 = code.split(/[\/_]/).map(&:strip)
+      @all[c2] ||= {}
+      pair = @all[c2][c1]
+      unless pair
+        @all[c2][c1] = pair = Pair.new(
+            target_currency: Currency.find_by_code(c1),
+            base_currency: Currency.find_by_code(c2),
+        )
+      end
+      pair
     end
 
     def active

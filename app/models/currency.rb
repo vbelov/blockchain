@@ -33,4 +33,8 @@ class Currency
   def <=>(other)
     code <=> other.code
   end
+
+  def btc?
+    code == 'btc'
+  end
 end

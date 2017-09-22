@@ -1,17 +1,12 @@
 module Stocks
   class Poloniex < Base
-    def download_order_books(pairs = nil)
-      pairs ||= valid_pairs
+    def download_order_books(stock_pairs = nil)
+      stock_pairs ||= downloadable_pairs
 
-      pairs.map do |pair|
-        hash = get(command: 'returnOrderBook', currencyPair: pair_to_code(pair), depth: 100)
-        [pair, hash] if hash
+      stock_pairs.map do |stock_pair|
+        hash = get(command: 'returnOrderBook', currencyPair: stock_pair.api_code, depth: 100)
+        [stock_pair, hash] if hash
       end.compact.to_h
-    end
-
-    def pairs
-      json = File.read('db/poloniex-pairs.json')
-      JSON.parse(json)['pairs'].map { |pair| pair.split('_').reverse.join('_') }
     end
 
     def get_raw(options)
@@ -25,12 +20,8 @@ module Stocks
       JSON.parse(get_raw(options))
     end
 
-    def pair_to_code(pair)
-      "#{currency_to_code(pair.base_currency)}_#{currency_to_code(pair.target_currency)}"
-    end
-
-    def serialize_currency_code(code)
-      code.upcase
+    def serialize_pair(target_code, base_code)
+      "#{base_code.upcase}_#{target_code.upcase}"
     end
 
 

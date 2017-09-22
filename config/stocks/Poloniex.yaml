@@ -1,0 +1,201 @@
+---
+stocks:
+  Poloniex:
+    AMP_BTC:
+      active: false
+    ARDR_BTC:
+      active: false
+    BCH_BTC:
+      active: true
+    BCH_ETH:
+      active: false
+    BCH_USDT:
+      active: false
+    BCN_BTC:
+      active: false
+    BCN_XMR:
+      active: false
+    BCY_BTC:
+      active: false
+    BELA_BTC:
+      active: false
+    BLK_BTC:
+      active: false
+    BLK_XMR:
+      active: false
+    BTCD_BTC:
+      active: false
+    BTCD_XMR:
+      active: false
+    BTC_USDT:
+      active: false
+    BTM_BTC:
+      active: false
+    BTS_BTC:
+      active: false
+    BURST_BTC:
+      active: false
+    CLAM_BTC:
+      active: false
+    CVC_BTC:
+      active: false
+    CVC_ETH:
+      active: false
+    DASH_BTC:
+      active: true
+    DASH_USDT:
+      active: false
+    DASH_XMR:
+      active: false
+    DCR_BTC:
+      active: false
+    DGB_BTC:
+      active: false
+    DOGE_BTC:
+      active: false
+    EMC2_BTC:
+      active: false
+    ETC_BTC:
+      active: true
+    ETC_ETH:
+      active: false
+    ETC_USDT:
+      active: false
+    ETH_BTC:
+      active: true
+    ETH_USDT:
+      active: false
+    EXP_BTC:
+      active: false
+    FCT_BTC:
+      active: false
+    FLDC_BTC:
+      active: false
+    FLO_BTC:
+      active: false
+    GAME_BTC:
+      active: false
+    GNO_BTC:
+      active: true
+    GNO_ETH:
+      active: false
+    GNT_BTC:
+      active: false
+    GNT_ETH:
+      active: false
+    GRC_BTC:
+      active: false
+    HUC_BTC:
+      active: false
+    LBC_BTC:
+      active: false
+    LSK_BTC:
+      active: false
+    LSK_ETH:
+      active: false
+    LTC_BTC:
+      active: true
+    LTC_USDT:
+      active: false
+    LTC_XMR:
+      active: false
+    MAID_BTC:
+      active: false
+    MAID_XMR:
+      active: false
+    NAUT_BTC:
+      active: false
+    NAV_BTC:
+      active: false
+    NEOS_BTC:
+      active: false
+    NMC_BTC:
+      active: false
+    NOTE_BTC:
+      active: false
+    NXC_BTC:
+      active: false
+    NXT_BTC:
+      active: false
+    NXT_USDT:
+      active: false
+    NXT_XMR:
+      active: false
+    OMG_BTC:
+      active: true
+    OMG_ETH:
+      active: false
+    OMNI_BTC:
+      active: false
+    PASC_BTC:
+      active: false
+    PINK_BTC:
+      active: false
+    POT_BTC:
+      active: false
+    PPC_BTC:
+      active: false
+    RADS_BTC:
+      active: false
+    REP_BTC:
+      active: false
+    REP_ETH:
+      active: false
+    REP_USDT:
+      active: false
+    RIC_BTC:
+      active: false
+    SBD_BTC:
+      active: false
+    SC_BTC:
+      active: false
+    SJCX_BTC:
+      active: false
+    STEEM_BTC:
+      active: false
+    STEEM_ETH:
+      active: false
+    STRAT_BTC:
+      active: false
+    STR_BTC:
+      active: false
+    STR_USDT:
+      active: false
+    SYS_BTC:
+      active: false
+    VIA_BTC:
+      active: false
+    VRC_BTC:
+      active: false
+    VTC_BTC:
+      active: false
+    XBC_BTC:
+      active: false
+    XCP_BTC:
+      active: false
+    XEM_BTC:
+      active: true
+    XMR_BTC:
+      active: true
+    XMR_USDT:
+      active: false
+    XPM_BTC:
+      active: false
+    XRP_BTC:
+      active: true
+    XRP_USDT:
+      active: false
+    XVC_BTC:
+      active: false
+    ZEC_BTC:
+      active: false
+    ZEC_ETH:
+      active: false
+    ZEC_USDT:
+      active: false
+    ZEC_XMR:
+      active: false
+    ZRX_BTC:
+      active: false
+    ZRX_ETH:
+      active: false

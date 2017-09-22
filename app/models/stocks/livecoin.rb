@@ -1,21 +1,14 @@
 module Stocks
   class Livecoin < Base
-    def pairs
-      json = File.read('db/livecoin-pairs.json')
-      JSON.parse(json)['pairs']
-    end
+    def download_order_books(stock_pairs = nil)
+      stock_pairs ||= downloadable_pairs
 
-    def download_order_books(pairs = nil)
-      pairs ||= valid_pairs
-
-      pairs.map do |pair|
-        hash = get('order_book', currencyPair: pair_to_code(pair))
+      stock_pairs.map do |stock_pair|
+        hash = get('order_book', currencyPair: stock_pair.api_code)
         if hash
-          asks = hash['asks'].map { |r| r.map(&:to_f) }
-          bids = hash['bids'].map { |r| r.map(&:to_f) }
           # noinspection RubyStringKeysInHashInspection
-          hash = {'asks' => asks, 'bids' => bids}
-          [pair, hash]
+          hash = {'asks' => hash['asks'], 'bids' => hash['bids']}
+          [stock_pair, hash]
         end
       end.compact.to_h
     end
@@ -31,12 +24,8 @@ module Stocks
       JSON.parse(get_raw(action, params))
     end
 
-    def serialize_currency_code(code)
-      code.upcase
-    end
-
-    def pair_to_code(pair)
-      "#{currency_to_code(pair.target_currency)}/#{currency_to_code(pair.base_currency)}"
+    def serialize_pair(target_code, base_code)
+      "#{target_code.upcase}/#{base_code.upcase}"
     end
 
 

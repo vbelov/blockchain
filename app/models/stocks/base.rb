@@ -2,51 +2,47 @@ module Stocks
   class Base
     mattr_reader(:max_glass_volume) { 5 }
 
+    def stock
+      @stock ||= Stock.find_by_code(stock_code)
+    end
+
     def stock_code
       self.class.name.demodulize
     end
 
+    def downloadable_pairs
+      stock.active_pairs
+    end
+
     def valid_pairs
-      @valid_pairs ||=
-          pairs.map do |pair|
-            code1, code2 = pair.split('_').map(&:downcase)
-            next unless code2 == 'btc'
-            c1 = currency_by_code(code1)
-            c2 = currency_by_code(code2)
-            if c1 && c2
-              Pair.new(
-                  target_currency: c1,
-                  base_currency: c2,
-              )
-            end
-          end.compact
+      @valid_pairs ||= stock.active_pairs.map(&:pair)
     end
 
     def refresh_glasses
       download_order_books.each { |pair, data| save_glass(pair, data) }
     end
 
-    def save_glass(pair, pair_data)
+    def save_glass(stock_pair, pair_data)
       now = Time.now
       time = now.at_beginning_of_minute
       time = time + 1.minute if now.sec > 30
 
       bids, asks = %w(bids asks).map do |a|
         base_volume = 0
-        orders_to_keep = pair_data[a].take_while do |rate, order_target_volume|
-          rate = rate.to_f
+        pair_data[a]
+            .lazy
+            .map { |r| [r[0].to_f, r[1].to_f] }
+            .take_while do |rate, order_target_volume|
           res = base_volume < max_glass_volume
           base_volume += rate * order_target_volume
           res
         end
-
-        orders_to_keep.map { |r| [r[0].to_f, r[1].to_f] }
       end
 
       Glass.create!(
           stock_code: stock_code,
-          target_code: pair.target_code,
-          base_code: pair.base_code,
+          target_code: stock_pair.target_code,
+          base_code: stock_pair.base_code,
           sell_orders: bids.to_json,
           buy_orders: asks.to_json,
           time: time,
@@ -65,9 +61,9 @@ module Stocks
       ).order(created_at: :desc).first
 
       unless glass
-        pair = vector.pair
-        pair_data = download_order_books([pair])[pair]
-        glass = save_glass(pair, pair_data) if pair_data
+        stock_pair = stock.get_stock_pair(vector.pair)
+        pair_data = download_order_books([stock_pair])[stock_pair]
+        glass = save_glass(stock_pair, pair_data) if pair_data
       end
 
       glass
@@ -206,27 +202,8 @@ module Stocks
       end
     end
 
-    def currency_by_code(code)
-      code = conversion_table[code] || code
-      Currency.find_by_code(code)
-    end
-
-    def currency_to_code(currency)
-      table = conversion_table.to_a.map(&:reverse).to_h
-      code = table[currency.code] || currency.code
-      serialize_currency_code(code)
-    end
-
-    def pair_to_code(pair)
-      "#{currency_to_code(pair.target_currency)}_#{currency_to_code(pair.base_currency)}"
-    end
-
-    def conversion_table
-      {}
-    end
-
-    def serialize_currency_code(code)
-      code
+    def serialize_pair(target_code, base_code)
+      raise NotImplementedError
     end
   end
 end

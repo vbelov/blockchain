@@ -1,0 +1,61 @@
+---
+stocks:
+  Exmo:
+    BTC_EUR:
+      active: false
+    BTC_RUB:
+      active: false
+    BTC_UAH:
+      active: false
+    BTC_USD:
+      active: false
+    BTC_USDT:
+      active: false
+    DASH_BTC:
+      active: true
+    DASH_RUB:
+      active: false
+    DASH_USD:
+      active: false
+    DOGE_BTC:
+      active: false
+    ETH_BTC:
+      active: true
+    ETH_EUR:
+      active: false
+    ETH_LTC:
+      active: false
+    ETH_RUB:
+      active: false
+    ETH_UAH:
+      active: false
+    ETH_USD:
+      active: false
+    LTC_BTC:
+      active: true
+    LTC_EUR:
+      active: false
+    LTC_RUB:
+      active: false
+    LTC_USD:
+      active: false
+    USDT_RUB:
+      active: false
+    USD_RUB:
+      active: false
+    WAVES_BTC:
+      active: false
+    XMR_BTC:
+      active: true
+    XMR_EUR:
+      active: false
+    XMR_USD:
+      active: false
+    ZEC_BTC:
+      active: false
+    ZEC_EUR:
+      active: false
+    ZEC_RUB:
+      active: false
+    ZEC_USD:
+      active: false

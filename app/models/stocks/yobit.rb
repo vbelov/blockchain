@@ -1,34 +1,19 @@
-# A / B
-# Покупка: сколько B я должен заплатить, чтобы купить 1 A
-# Ордера на продажу (asks): другие чуваки продают A за B
-
-# Продажа: сколько B я получу за один A
-# Ордера на покупку (bids): другие чуваки покупают A за B
-
-# стартуем с X единиц валюты A
-# смотрим, сколько примерно это будет в каждой из валют
-# смотрим средневзвешенный курс в каждой паре
 module Stocks
   class Yobit < Base
-    def pairs
-      json = File.read('db/yobit-pairs.json')
-      JSON.parse(json)['pairs']
-    end
-
-    def download_order_books(pairs = nil)
-      pairs ||= valid_pairs
-      code = pairs.map { |p| pair_to_code(p) }.join('-')
+    def download_order_books(stock_pairs = nil)
+      stock_pairs ||= downloadable_pairs
+      code = stock_pairs.map(&:api_code).join('-')
       hash = get("depth/#{code}")
-      pairs.map do |pair|
-        code = pair_to_code(pair)
-        data = hash[code]
-        [pair, data] if data
+      stock_pairs.map do |stock_pair|
+        data = hash[stock_pair.api_code]
+        [stock_pair, data] if data
       end.compact.to_h
     end
 
     def get_raw(path)
-      puts "sending request to #{path}"
-      response = RestClient.get "https://yobit.net/api/3/#{path}"
+      url = "https://yobit.net/api/3/#{path}"
+      puts "sending request to #{url}"
+      response = RestClient.get url
       response.body
     end
 
@@ -36,9 +21,8 @@ module Stocks
       JSON.parse(get_raw(path))
     end
 
-    # noinspection RubyStringKeysInHashInspection
-    def conversion_table
-      {'omg' => 'omgame', 'bcc' => 'bch'}
+    def serialize_pair(target_code, base_code)
+      "#{target_code.downcase}_#{base_code.downcase}"
     end
 
 
