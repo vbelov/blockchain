@@ -13,10 +13,10 @@ table.table.sortable
       th Биржи
       th Пара
       th data-firstsort="desc" Начало
-      th data-firstsort="desc" Длительность
+      th data-firstsort="desc" Длит.
       th data-firstsort="desc" Доход
       th data-firstsort="desc" Объем
-      th data-firstsort="desc" Прибыльность
+      th data-firstsort="desc" Выгода
       th
   tbody
     - @periods.each do |period|
@@ -28,5 +28,4 @@ table.table.sortable
         td= period.max_revenue&.round(4)
         td= period.volume.round(3)
         td= (period.max_arbitrage.to_f * 100.0).round(1)
-        /td= link_to 'Подробнее', arbitrage_period_path(period)
-        td= link_to 'Опт. время', best_point_arbitrage_period_path(period)
+        td= link_to 'Инфа', period

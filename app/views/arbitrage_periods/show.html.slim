@@ -1,12 +1,30 @@
-strong Максимальный доход
-= line_chart @revenue_chart
+table.table.sortable
+  thead
+    tr
+      th.text-center colspan=5 Оптимальная точка
+    tr
+      th Время
+      th Доход
+      th Объем
+      th Выгода
+      th
+  tbody
+    tr
+      td= best_point.time.to_s(:short)
+      td= fv(best_point.max_revenue)
+      td= fv(best_point.volume)
+      td= fs(best_point.rate_or_return)
+      td= link_to 'подробно', best_point
+
+strong Максимальный доход, BTC
+= line_chart @charts[:revenue]
 
 br
 
-strong Оптимальный объем
-= line_chart @volume_chart
+strong Оптимальный объем, BTC
+= line_chart @charts[:volume]
 
 br
 
-strong Прибыльность оптимальной сделки
-= line_chart @profit_chart
+strong Прибыльность оптимальной сделки, %
+= line_chart @charts[:profit]

@@ -130,8 +130,7 @@ class CreateArbitragePeriods
         time: time_range,
     ).to_a.index_by(&:time)
 
-    period_max_revenue = 0
-    period_volume = 0
+    points_with_revenue = []
 
     time = period.started_at
     while time <= period.finished_at
@@ -148,26 +147,39 @@ class CreateArbitragePeriods
         )
         volume_for_max_revenue, max_revenue = calculator.calc_optimal
 
-        if max_revenue > period_max_revenue
-          period_max_revenue = max_revenue
-          period_volume = volume_for_max_revenue
+        if max_revenue > 0
+          points_with_revenue << {
+              time: time,
+              max_revenue: max_revenue,
+              volume: volume_for_max_revenue,
+          }
         end
-
-        period.arbitrage_points.build(
-            time: time,
-            max_revenue: max_revenue,
-            volume: volume_for_max_revenue,
-        )
       end
 
       time += 1.minute
     end
 
-    if period_volume > 0
+    if points_with_revenue.any?
+      points_with_revenue.each do |point_attributes|
+        period.arbitrage_points.build(point_attributes)
+      end
+
+      point = period.arbitrage_points.max_by(&:max_revenue)
+      max_revenue = point.max_revenue
+      volume = point.volume
+      arbitrage = volume > 0 ? max_revenue / volume : 0
+
+      started_at  = period.arbitrage_points.map(&:time).min
+      finished_at = period.arbitrage_points.map(&:time).max
+      duration    = (finished_at - started_at).to_i
+
       period.update!(
-          max_revenue: period_max_revenue,
-          volume: period_volume,
-          max_arbitrage: period_volume > 0 ? period_max_revenue / period_volume : 0,
+          max_revenue: max_revenue,
+          volume: volume,
+          max_arbitrage: arbitrage,
+          started_at: started_at,
+          finished_at: finished_at,
+          duration: duration,
       )
     end
   end

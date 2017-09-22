@@ -14,4 +14,8 @@ module GlassesHelper
   def fv(volume)
     number_with_precision(volume, precision: 5)
   end
+
+  def fs(share)
+    "#{number_with_precision(share * 100.0, precision: 1)} %"
+  end
 end
