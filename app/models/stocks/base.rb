@@ -54,7 +54,7 @@ module Stocks
           stock_code: stock_code,
           target_code: vector.target_code,
           base_code: vector.base_code,
-      ).order(created_at: :desc).first
+      ).order(time: :desc).first
 
       unless glass
         stock_pair = stock.get_stock_pair(vector.pair)
