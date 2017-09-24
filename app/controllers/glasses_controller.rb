@@ -3,23 +3,15 @@ class GlassesController < ApplicationController
                 :action, :volume,
                 :result,
                 :valid_pairs, :pair,
-                :stock_names, :stock_name
+                :stock
 
   def index
   end
 
   private
 
-  def stock_names
-    Stock.all
-  end
-
-  def stock_name
-    stock_names.find { |p| p == glass_params[:stock_name] } || 'Yobit'
-  end
-
   def stock
-    @stock ||= Stocks.const_get(stock_name).new
+    @stock ||= Stock.find_by_code(glass_params[:stock_name]) || Stock.yobit
   end
 
   def result

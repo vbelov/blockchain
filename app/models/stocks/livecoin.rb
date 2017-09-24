@@ -1,5 +1,5 @@
 module Stocks
-  class Livecoin < Base
+  module Livecoin
     def download_order_books(stock_pairs = nil)
       stock_pairs ||= downloadable_pairs
 

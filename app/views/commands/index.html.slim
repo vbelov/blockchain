@@ -1,17 +1,10 @@
-- if flash.notice
-  .alert.alert-success
-    = flash.notice
-
 table.table.table-striped
   thead
     tr
       th Биржа
       th Последнее обновление
-      /th
   tbody
-    - stocks.each do |stock|
-      /- code = stock.stock_code
+    - Stock.all.each do |stock|
       tr
         td= stock.stock_code
         td= stock.refresh_time
-        /td= button_to "Обновить #{code}", refresh_glasses_commands_path(stock_code: code), class: 'btn btn-primary'

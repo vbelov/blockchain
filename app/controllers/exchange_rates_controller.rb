@@ -1,6 +1,6 @@
 class ExchangeRatesController < ApplicationController
   helper_method :volume,
-                :stock_names, :stock_name,
+                :stock,
                 :valid_pairs, :list_of_pairs, :selected_pair
 
   def index
@@ -26,19 +26,12 @@ class ExchangeRatesController < ApplicationController
 
   private
 
-  def stock_names
-    Stock.all
-  end
-
-  def stock_name
-    stock_names.find { |p| p == exchange_rates_params[:stock_name] }
+  def stock
+    Stock.find_by_code(exchange_rates_params[:stock_name])
   end
 
   def stocks
-    @stocks ||=
-        Array.wrap(stock_name || Stock.all).map do |name|
-          Stocks.const_get(name).new
-        end
+    @stocks ||= Array.wrap(stock || Stock.all)
   end
 
   def valid_pairs

@@ -1,21 +1,17 @@
 module Stocks
-  class Base
+  module Base
     mattr_reader(:max_glass_volume) { 5 }
 
-    def stock
-      @stock ||= Stock.find_by_code(stock_code)
-    end
-
     def stock_code
-      self.class.name.demodulize
+      code
     end
 
     def downloadable_pairs
-      stock.active_pairs
+      active_pairs
     end
 
     def valid_pairs
-      @valid_pairs ||= stock.active_pairs.map(&:pair)
+      @valid_pairs ||= active_pairs.map(&:pair)
     end
 
     def refresh_glasses

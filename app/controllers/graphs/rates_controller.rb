@@ -15,8 +15,8 @@ module Graphs
 
       @chart_groups = {}
 
-      Stock.all.each do |stock_code|
-        stock = Stocks.const_get(stock_code).new
+      Stock.all.each do |stock|
+        stock_code = stock.code
 
         glasses = Glass.where(
             stock_code: stock_code,

@@ -1,5 +1,5 @@
 module Stocks
-  class Poloniex < Base
+  module Poloniex
     def download_order_books(stock_pairs = nil)
       stock_pairs ||= downloadable_pairs
 

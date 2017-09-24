@@ -19,7 +19,8 @@ class CreateArbitragePeriods
 
     stocks = Stock.all
     # stocks = %w(Yobit Poloniex)
-    stocks.each do |stock_code|
+    stocks.each do |stock|
+      stock_code = stock.code
       glasses = Glass.where(
           stock_code: stock_code,
           target_code: pair.target_code,
@@ -27,8 +28,6 @@ class CreateArbitragePeriods
       ).order(:time).to_a
 
       if glasses.any?
-        stock = Stocks.const_get(stock_code).new
-
         stock_points = begin
           %i(sell buy).map do |action|
             points = glasses.map do |glass|
@@ -113,8 +112,8 @@ class CreateArbitragePeriods
     buy_stock_code = period.buy_stock_code
     sell_stock_code = period.sell_stock_code
 
-    buy_stock = Stocks.const_get(buy_stock_code).new
-    sell_stock = Stocks.const_get(sell_stock_code).new
+    buy_stock = Stock.find_by_code(buy_stock_code)
+    sell_stock = Stock.find_by_code(sell_stock_code)
 
     time_range = (period.started_at..period.finished_at)
     buy_glasses = Glass.where(

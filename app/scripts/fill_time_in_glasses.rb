@@ -1,6 +1,7 @@
 class FillTimeInGlasses
   def run
-    Stock.all.each do |stock_code|
+    Stock.all.each do |stock|
+      stock_code = stock.code
       puts "processing glasses for #{stock_code}"
       batch_size = 1_000
       sql = Glass.where(stock_code: stock_code)

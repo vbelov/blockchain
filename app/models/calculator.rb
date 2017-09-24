@@ -20,8 +20,8 @@ class Calculator
   def initialize(*args)
     super
 
-    self.buy_stock ||= Stocks.const_get(buy_stock_code).new
-    self.sell_stock ||= Stocks.const_get(sell_stock_code).new
+    self.buy_stock ||= Stock.find_by_code(buy_stock_code)
+    self.sell_stock ||= Stock.find_by_code(sell_stock_code)
 
     self.buy_stock_code ||= buy_stock.stock_code
     self.sell_stock_code ||= sell_stock.stock_code

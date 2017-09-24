@@ -5,7 +5,7 @@ class PeriodicRefresher
     loop do
       begin
         my_sleep
-        stocks.each do |stock|
+        Stock.all.each do |stock|
           puts "updating #{stock.stock_code} ..."
           stock.refresh_glasses
         end
@@ -20,10 +20,6 @@ class PeriodicRefresher
   end
 
   private
-
-  def stocks
-    Stock.all.map { |c| Stocks.const_get(c).new }
-  end
 
   def my_sleep
     seconds = 60 - Time.now.sec

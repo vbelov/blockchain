@@ -1,5 +1,5 @@
 module Stocks
-  class Exmo < Base
+  module Exmo
     def download_order_books(pairs = nil)
       pairs ||= downloadable_pairs
       code = pairs.map(&:api_code).join(',')

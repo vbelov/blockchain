@@ -1,5 +1,5 @@
 module Stocks
-  class Yobit < Base
+  module Yobit
     def download_order_books(stock_pairs = nil)
       stock_pairs ||= downloadable_pairs
       code = stock_pairs.map(&:api_code).join('-')

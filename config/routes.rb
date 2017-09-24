@@ -4,11 +4,7 @@ Rails.application.routes.draw do
 
   resources :exchange_rates, only: :index
   resources :glasses, only: :index
-  resources :commands, only: :index do
-    collection do
-      post :refresh_glasses
-    end
-  end
+  resources :commands, only: :index
   namespace :graphs do
     resource :arbitrage, only: :show
     resources :rates, only: :index

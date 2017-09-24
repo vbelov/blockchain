@@ -63,7 +63,7 @@ class Pair
     end
 
     def active
-      Stock.all.flat_map { |code| Stocks.const_get(code).new.valid_pairs }.uniq
+      Stock.all.flat_map(&:valid_pairs).uniq
     end
   end
 end

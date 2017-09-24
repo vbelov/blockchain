@@ -6,7 +6,8 @@ class MeliorateGlasses
   end
 
   def do_run
-    Stock.all.each do |stock_code|
+    Stock.all.each do |stock|
+      stock_code = stock.code
       puts "processing glasses for #{stock_code}"
 
       total_orders = 0

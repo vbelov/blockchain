@@ -15,7 +15,8 @@ class StockPair
 
   class << self
     def all
-      @all ||= Stock.all.flat_map do |stock_code|
+      @all ||= Stock.all.flat_map do |stock|
+        stock_code = stock.code
         content = YAML.load_file("config/stocks/#{stock_code}.yaml")
         content['stocks'][stock_code].map do |code_in_stock, pair_data|
           code_in_app = pair_data['real_code'] || code_in_stock
@@ -48,6 +49,6 @@ class StockPair
   end
 
   def api_code
-    @api_code ||= stock.api.serialize_pair(*code_in_stock.split('_'))
+    @api_code ||= stock.serialize_pair(*code_in_stock.split('_'))
   end
 end

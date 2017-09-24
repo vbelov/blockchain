@@ -15,8 +15,9 @@ module Graphs
             pair_of_actions = %i(sell buy)
             points_by_stock = {}
 
-            stock_names.each do |stock_code|
-              time = [24.hours.ago, Time.parse('2017-09-15 17:00:00 +0300')].max
+            Stock.all.each do |stock|
+              stock_code = stock.code
+              time = 24.hours.ago
               glasses = Glass.where(
                   stock_code: stock_code,
                   target_code: target_currency,
@@ -25,7 +26,6 @@ module Graphs
 
               if glasses.any?
                 active_stocks << stock_code
-                stock = Stocks.const_get(stock_code).new
 
                 stock_points = benchmark "processing glasses for stock #{stock_code}" do
                   pair_of_actions.map do |action|
@@ -71,10 +71,6 @@ module Graphs
           end
     end
 
-    def stock_names
-      Stock.all
-    end
-
     def vector
       Vector.my_find(target_currency, base_currency, action)
     end
@@ -88,10 +84,10 @@ module Graphs
     end
 
     def valid_pairs
-      stock_names
-          .flat_map { |code| Stocks.const_get(code).new.valid_pairs.map { |p| [p, code] } }
-          .group_by(&:first)
-          .select { |p, stocks| stocks.count > 1 }
+      Stock.all
+          .flat_map(&:valid_pairs)
+          .group_by(&:itself)
+          .select { |p, pairs| pairs.count > 1 }
           .map(&:first)
           .map(&:slashed_code)
     end
