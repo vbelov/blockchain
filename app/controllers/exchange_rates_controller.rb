@@ -35,7 +35,7 @@ class ExchangeRatesController < ApplicationController
   end
 
   def valid_pairs
-    stocks.flat_map { |s| s.valid_pairs.map(&:slashed_code) }.uniq.sort
+    stocks.flat_map { |s| s.visible_pairs.map(&:slashed_code) }.uniq.sort
   end
 
   def list_of_pairs

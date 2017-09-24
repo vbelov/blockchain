@@ -55,15 +55,15 @@ class Pair
       pair = @all[c2][c1]
       unless pair
         @all[c2][c1] = pair = Pair.new(
-            target_currency: Currency.find_by_code(c1),
-            base_currency: Currency.find_by_code(c2),
+            target_currency: Currency.find_by_code!(c1),
+            base_currency: Currency.find_by_code!(c2),
         )
       end
       pair
     end
 
-    def active
-      Stock.all.flat_map(&:valid_pairs).uniq
+    def visible
+      Stock.all.flat_map(&:visible_pairs).map(&:pair).uniq
     end
   end
 end

@@ -1,13 +1,14 @@
 class Stock
   include Virtus.model
   include Stocks::Base
+  include Stocks::CrossPairs
 
   attribute :code, String
 
 
   class << self
     def all_codes
-      %w(Yobit Poloniex Exmo Livecoin)
+      %w(Yobit Poloniex Exmo Livecoin C2cx)
     end
 
     def all
@@ -38,7 +39,16 @@ class Stock
     @active_pairs ||= StockPair.find_all_by(stock_code: code, active: true)
   end
 
-  def get_stock_pair(pair)
-    active_pairs.find { |stock_pair| stock_pair.pair == pair }
+  def visible_pairs
+    @visible_pairs ||= StockPair.find_all_by(stock_code: code, visible: true)
+  end
+
+  def cross_pairs
+    @cross_pairs ||= StockPair.find_all_by(stock_code: code, cross: true)
+  end
+
+  def get_stock_pair(pair_or_code)
+    pair = pair_or_code.is_a?(Pair) ? pair_or_code : Pair.find_by_code(pair_or_code)
+    StockPair.find_all_by(stock_code: code, pair: pair).first
   end
 end

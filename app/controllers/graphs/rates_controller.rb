@@ -60,7 +60,7 @@ module Graphs
     end
 
     def pair_codes
-      Pair.active.map(&:slashed_code).sort
+      Pair.visible.map(&:slashed_code).sort
     end
 
     def pair

@@ -4,7 +4,7 @@ class CreateArbitragePeriods
     ArbitragePoint.delete_all
 
     ActiveRecord::Base.logger.silence do
-      pairs = Pair.active
+      pairs = Pair.visible
       # pairs = [Pair.find_by_code('XEM / BTC')]
       pairs.each { |pair| process_pair(pair) }
     end

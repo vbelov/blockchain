@@ -7,6 +7,12 @@
 
 br
 
+- if stock_pair.cross_pair?
+  .alert.alert-warning
+    p
+      | Это виртуальный стакан, созданный автоматически на основании данных по парам
+      |  #{stock_pair.target_pair.slashed_code} и #{stock_pair.base_pair.slashed_code}
+
 - if result.error
   .alert.alert-danger
     strong= result.error

@@ -2,7 +2,7 @@ class GlassesController < ApplicationController
   helper_method :target_currency, :base_currency,
                 :action, :volume,
                 :result,
-                :valid_pairs, :pair,
+                :valid_pairs, :pair, :stock_pair,
                 :stock
 
   def index
@@ -31,12 +31,16 @@ class GlassesController < ApplicationController
   end
 
   def valid_pairs
-    stock.valid_pairs.map(&:slashed_code)
+    stock.visible_pairs.map(&:slashed_code)
   end
 
   def pair
     find = ->(code) { valid_pairs.find { |p| p == code } }
     find.(glass_params[:pair]) || find.('ETH / BTC') || valid_pairs.first
+  end
+
+  def stock_pair
+    stock.get_stock_pair(pair)
   end
 
   def actions

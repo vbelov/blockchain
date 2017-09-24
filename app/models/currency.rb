@@ -15,6 +15,10 @@ class Currency
       cur
     end
 
+    def find_by_code!(code)
+      find_by_code(code) || raise("Failed to find currency #{code}")
+    end
+
     def btc
       find_by_code 'btc'
     end

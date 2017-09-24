@@ -8,10 +8,10 @@ class StockPair
   attribute :visible, Boolean
 
   attribute :cross, Boolean
-  attribute :base_pair, StockPair
-  attribute :secondary_pair, StockPair
+  attribute :base_pair_code, String
+  attribute :target_pair_code, String
 
-  delegate :target_code, :base_code, to: :pair
+  delegate :target_code, :base_code, :slashed_code, to: :pair
 
   class << self
     def all
@@ -19,19 +19,30 @@ class StockPair
         stock_code = stock.code
         content = YAML.load_file("config/stocks/#{stock_code}.yaml")
         content['stocks'][stock_code].map do |code_in_stock, pair_data|
-          code_in_app = pair_data['real_code'] || code_in_stock
-          pair = Pair.find_by_code(code_in_app)
-
           active = pair_data['active']
-          StockPair.new(
-              stock_code: stock_code,
-              pair: pair,
-              code_in_stock: code_in_stock,
-              active: active,
-              visible: active,
-              cross: false,
-          )
-        end
+          visible = pair_data.fetch('visible', active)
+          cross = pair_data.fetch('cross', false)
+
+          if active || visible
+            code_in_app = pair_data['real_code'] || code_in_stock
+            pair = Pair.find_by_code(code_in_app)
+
+            stock_pair = StockPair.new(
+                stock_code: stock_code,
+                pair: pair,
+                code_in_stock: code_in_stock,
+                active: active,
+                visible: visible,
+                cross: cross,
+            )
+            if cross
+              stock_pair.base_pair_code = pair_data['base_pair']
+              stock_pair.target_pair_code = pair_data['target_pair']
+            end
+
+            stock_pair
+          end
+        end.compact
       end
     end
 
@@ -50,5 +61,21 @@ class StockPair
 
   def api_code
     @api_code ||= stock.serialize_pair(*code_in_stock.split('_'))
+  end
+
+  def base_pair
+    @base_pair ||= self.class.find_all_by(stock_code: stock_code, code_in_stock: base_pair_code).first
+  end
+
+  def target_pair
+    @target_pair ||= self.class.find_all_by(stock_code: stock_code, code_in_stock: target_pair_code).first
+  end
+
+  def downloadable?
+    active
+  end
+
+  def cross_pair?
+    cross
   end
 end

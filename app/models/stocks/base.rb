@@ -16,6 +16,7 @@ module Stocks
 
     def refresh_glasses
       download_order_books.each { |pair, data| save_glass(pair, data) }
+      refresh_cross_pairs
     end
 
     def save_glass(stock_pair, pair_data)
@@ -29,9 +30,14 @@ module Stocks
             .lazy
             .map { |r| [r[0].to_f, r[1].to_f] }
             .take_while do |rate, order_target_volume|
-          res = base_volume < max_glass_volume
-          base_volume += rate * order_target_volume
-          res
+          if stock_pair.base_code == 'btc'
+            res = base_volume < max_glass_volume
+            base_volume += rate * order_target_volume
+            res
+          else
+            # TODO реализовать (нужны ограничения для всех базовых валют)
+            true
+          end
         end
       end
 
@@ -49,33 +55,19 @@ module Stocks
       Glass.where(stock_code: stock_code).order(created_at: :desc).first&.created_at
     end
 
-    def find_or_fetch_glass(vector)
+    def process_vector(vector, amount)
       glass = Glass.where(
           stock_code: stock_code,
           target_code: vector.target_code,
           base_code: vector.base_code,
       ).order(time: :desc).first
+      return unless glass
 
-      unless glass
-        stock_pair = stock.get_stock_pair(vector.pair)
-        pair_data = download_order_books([stock_pair])[stock_pair]
-        glass = save_glass(stock_pair, pair_data) if pair_data
-      end
+      json = glass.send("#{vector.action}_orders")
+      raw_orders = JSON.parse(json)
+      orders = build_orders(vector, raw_orders)
 
-      glass
-    end
-
-    def get_raw_orders(vector)
-      glass = find_or_fetch_glass(vector)
-      if glass
-        json = glass.send("#{vector.action}_orders")
-        JSON.parse(json)
-      end
-    end
-
-    def get_orders(vector)
-      raw_orders = get_raw_orders(vector)
-      build_orders(vector, raw_orders)
+      process_orders(orders, amount)
     end
 
     def build_orders(vector, raw_orders)
@@ -145,11 +137,6 @@ module Stocks
       target_volume == 0 ? base_volume : nil
     end
 
-    def process_vector(vector, amount)
-      orders = get_orders(vector)
-      process_orders(orders, amount)
-    end
-
     def process_orders(orders, amount)
       base_volume = amount
       target_volume = 0
@@ -179,12 +166,10 @@ module Stocks
     end
 
     def current_exchange_rates(base_currency, base_amount, pairs: nil)
-      pairs = pairs
-                  &.map { |pair| pair.is_a?(Pair) ? pair : Pair.find_by_code(pair) }
-                  &.select { |p| p.in?(valid_pairs) } ||
-          valid_pairs
-      pairs.map do |pair|
-        er = ExchangeRate.new(stock: self.class.name.demodulize, pair: pair)
+      stock_pairs = pairs&.map { |p| get_stock_pair(p) }&.compact&.select(&:visible) || visible_pairs
+      stock_pairs.map do |stock_pair|
+        pair = stock_pair.pair
+        er = ExchangeRate.new(stock: stock_code, pair: pair)
 
         [:buy, :sell].each do |action|
           if pair.base_currency == base_currency
