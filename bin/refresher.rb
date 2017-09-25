@@ -1,1 +1,1 @@
-PeriodicRefresher.new.run
+PeriodicRefresher.run
