@@ -28,5 +28,5 @@ table.table
             td= er.pair.slashed_code
           - else
             td= er.stock
-          td class=highlight_arbitrage(er, :buy) = fr(er.buy_rate)
-          td class=highlight_arbitrage(er, :sell) = fr(er.sell_rate)
+          td class=highlight_arbitrage(er, :buy) = fr(er.buy_rate) || 'нет данных'
+          td class=highlight_arbitrage(er, :sell) = fr(er.sell_rate) || 'нет данных'

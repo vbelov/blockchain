@@ -175,7 +175,7 @@ module Stocks
           if pair.base_currency == base_currency
             vector = Vector.new(pair: pair, action: action)
             result = process_vector(vector, base_amount)
-            er.send("#{action}_rate=", result.effective_rate) unless result.error
+            er.send("#{action}_rate=", result.effective_rate) if result && !result.error
           end
         end
 

@@ -11,7 +11,7 @@ class ExchangeRatesController < ApplicationController
     @rates_by_pair = rates.group_by(&:pair).to_a.sort_by { |pair, ers| pair.slashed_code }.to_h
     @rates_by_pair.each do |pair, ers|
       ers.permutation(2).each do |er1, er2|
-        if er1.buy_rate < er2.sell_rate
+        if er1.buy_rate && er2.sell_rate && er1.buy_rate < er2.sell_rate
           arbitrage = ((er2.sell_rate / er1.buy_rate - 1) * 100.0).round(2)
           if arbitrage > 1
             er1.add_arbitrage_on(:buy)
