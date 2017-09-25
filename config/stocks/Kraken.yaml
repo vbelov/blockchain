@@ -1,0 +1,105 @@
+---
+stocks:
+  Kraken:
+    BCH_EUR:
+      active: false
+    BCH_USD:
+      active: false
+    BCH_XBT:
+      active: true
+      real_code: BCH_BTC
+    DASH_EUR:
+      active: false
+    DASH_USD:
+      active: false
+    DASH_XBT:
+      active: true
+      real_code: DASH_BTC
+    EOS_ETH:
+      active: false
+    EOS_XBT:
+      active: false
+    GNO_ETH:
+      active: false
+    GNO_XBT:
+      active: true
+      real_code: GNO_BTC
+    USDT_USD:
+      active: false
+    ETC_ETH:
+      active: false
+    ETC_XBT:
+      active: true
+      real_code: ETC_BTC
+    ETC_EUR:
+      active: false
+    ETC_USD:
+      active: false
+    ETH_XBT:
+      active: true
+      real_code: ETH_BTC
+    ETH_CAD:
+      active: false
+    ETH_EUR:
+      active: false
+    ETH_GBP:
+      active: false
+    ETH_JPY:
+      active: false
+    ETH_USD:
+      active: false
+    ICN_ETH:
+      active: false
+    ICN_XBT:
+      active: false
+    LTC_XBT:
+      active: true
+      real_code: LTC_BTC
+    LTC_EUR:
+      active: false
+    LTC_USD:
+      active: false
+    MLN_ETH:
+      active: false
+    MLN_XBT:
+      active: false
+    REP_ETH:
+      active: false
+    REP_XBT:
+      active: false
+    REP_EUR:
+      active: false
+    XBT_CAD:
+      active: false
+    XBT_EUR:
+      active: false
+    XBT_GBP:
+      active: false
+    XBT_JPY:
+      active: false
+    XBT_USD:
+      active: false
+    XDG_XBT:
+      active: false
+    XLM_XBT:
+      active: false
+    XMR_XBT:
+      active: true
+      real_code: XMR_BTC
+    XMR_EUR:
+      active: false
+    XMR_USD:
+      active: false
+    XRP_XBT:
+      active: true
+      real_code: XRP_BTC
+    XRP_EUR:
+      active: false
+    XRP_USD:
+      active: false
+    ZEC_XBT:
+      active: false
+    ZEC_EUR:
+      active: false
+    ZEC_USD:
+      active: false

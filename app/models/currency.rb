@@ -7,6 +7,7 @@ class Currency
   class << self
     def find_by_code(code)
       code = code.downcase
+      code = 'btc' if code == 'xbt'
       @currencies = {}
       cur = @currencies[code]
       if !cur && allowed?(code)
