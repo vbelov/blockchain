@@ -1,0 +1,37 @@
+---
+stocks:
+  Cexio:
+    BTC_USD:
+      active: false
+    ETH_USD:
+      active: false
+    BCH_USD:
+      active: false
+    DASH_USD:
+      active: false
+    BTC_EUR:
+      active: false
+    ETH_EUR:
+      active: false
+    BCH_EUR:
+      active: false
+    DASH_EUR:
+      active: false
+    BTC_GBP:
+      active: false
+    ETH_GBP:
+      active: false
+    BCH_GBP:
+      active: false
+    DASH_GBP:
+      active: false
+    BTC_RUB:
+      active: false
+    ETH_BTC:
+      active: true
+    BCH_BTC:
+      active: true
+    DASH_BTC:
+      active: true
+    GHS_BTC:
+      active: false
