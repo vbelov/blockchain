@@ -1,0 +1,88 @@
+---
+stocks:
+  Bitfinex:
+    BTC_USD:
+      active: false
+    LTC_USD:
+      active: false
+    LTC_BTC:
+      active: true
+    ETH_USD:
+      active: false
+    ETH_BTC:
+      active: true
+    ETC_BTC:
+      active: true
+    ETC_USD:
+      active: false
+    RRT_USD:
+      active: false
+    RRT_BTC:
+      active: false
+    ZEC_USD:
+      active: false
+    ZEC_BTC:
+      active: false
+    XMR_USD:
+      active: false
+    XMR_BTC:
+      active: true
+    DSH_USD:
+      active: false
+    DSH_BTC:
+      active: true
+      real_code: DASH_BTC
+    BCC_BTC:
+      active: false
+    BCU_BTC:
+      active: false
+    BCC_USD:
+      active: false
+    BCU_USD:
+      active: false
+    XRP_USD:
+      active: false
+    XRP_BTC:
+      active: true
+    IOT_USD:
+      active: false
+    IOT_BTC:
+      active: true
+    IOT_ETH:
+      active: false
+    EOS_USD:
+      active: false
+    EOS_BTC:
+      active: false
+    EOS_ETH:
+      active: false
+    SAN_USD:
+      active: false
+    SAN_BTC:
+      active: false
+    SAN_ETH:
+      active: false
+    OMG_USD:
+      active: false
+    OMG_BTC:
+      active: true
+    OMG_ETH:
+      active: false
+    BCH_USD:
+      active: false
+    BCH_BTC:
+      active: true
+    BCH_ETH:
+      active: false
+    NEO_USD:
+      active: false
+    NEO_BTC:
+      active: true
+    NEO_ETH:
+      active: false
+    ETP_USD:
+      active: false
+    ETP_BTC:
+      active: false
+    ETP_ETH:
+      active: false
