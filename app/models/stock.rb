@@ -8,7 +8,7 @@ class Stock
 
   class << self
     def all_codes
-      %w(Yobit Poloniex Exmo Livecoin C2cx)
+      %w(Yobit Poloniex Exmo Livecoin C2cx Bittrex)
     end
 
     def all
