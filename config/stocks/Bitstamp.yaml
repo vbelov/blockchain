@@ -1,0 +1,27 @@
+---
+stocks:
+  Bitstamp:
+    BTC_USD:
+      active: false
+    BTC_EUR:
+      active: false
+    EUR_USD:
+      active: false
+    XRP_USD:
+      active: false
+    XRP_EUR:
+      active: false
+    XRP_BTC:
+      active: true
+    LTC_USD:
+      active: false
+    LTC_EUR:
+      active: false
+    LTC_BTC:
+      active: true
+    ETH_USD:
+      active: false
+    ETH_EUR:
+      active: false
+    ETH_BTC:
+      active: true

@@ -8,7 +8,7 @@ class Stock
 
   class << self
     def all_codes
-      @all_codes ||= %w(Yobit Poloniex Exmo Livecoin C2cx Bittrex Kraken Cexio Bitfinex Liqui Bter).sort
+      @all_codes ||= %w(Yobit Poloniex Exmo Livecoin C2cx Bittrex Kraken Cexio Bitfinex Liqui Bter Bitstamp).sort
     end
 
     def all
