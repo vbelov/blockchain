@@ -25,7 +25,7 @@ class Currency
     end
 
     def allowed?(code)
-      code.in?(%w(bcc bch btc cny dash etc eth eur gno iot ltc mtl neo omg qtum usd usdt xem xmr xrp))
+      code.in?(%w(bcc bch btc cny dash etc eth eur gno iot ltc mtl neo omg qtum usd usdt xem xmr xrp zec lsk waves strat doge steem))
       # %w(btc eth ltc)
     end
   end

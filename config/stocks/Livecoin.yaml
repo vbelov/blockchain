@@ -122,7 +122,7 @@ stocks:
     DMC_USD:
       active: false
     DOGE_BTC:
-      active: false
+      active: true
     DOGE_USD:
       active: false
     DOLLAR_BTC:
@@ -256,7 +256,7 @@ stocks:
     LEO_USD:
       active: false
     LSK_BTC:
-      active: false
+      active: true
     LSK_USD:
       active: false
     LTC_BTC:
@@ -418,9 +418,9 @@ stocks:
     SOAR_BTC:
       active: false
     STEEM_BTC:
-      active: false
+      active: true
     STRAT_BTC:
-      active: false
+      active: true
     STRAT_ETH:
       active: false
     STRAT_USD:
@@ -492,7 +492,7 @@ stocks:
     VSM_USD:
       active: false
     WAVES_BTC:
-      active: false
+      active: true
     WIC_BTC:
       active: false
     WIC_ETH:

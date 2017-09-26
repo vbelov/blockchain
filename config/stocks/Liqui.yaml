@@ -4,7 +4,7 @@ stocks:
     LTC_BTC:
       active: true
     STEEM_BTC:
-      active: false
+      active: true
     SBD_BTC:
       active: false
     DASH_BTC:
@@ -36,7 +36,7 @@ stocks:
     1ST_BTC:
       active: false
     WAVES_BTC:
-      active: false
+      active: true
     INCNT_BTC:
       active: false
     MLN_BTC:

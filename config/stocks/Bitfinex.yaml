@@ -22,7 +22,7 @@ stocks:
     ZEC_USD:
       active: false
     ZEC_BTC:
-      active: false
+      active: true
     XMR_USD:
       active: false
     XMR_BTC:

@@ -52,7 +52,7 @@ stocks:
     DGB_BTC:
       active: false
     DOGE_BTC:
-      active: false
+      active: true
     EMC2_BTC:
       active: false
     ETC_BTC:
@@ -90,7 +90,7 @@ stocks:
     LBC_BTC:
       active: false
     LSK_BTC:
-      active: false
+      active: true
     LSK_ETH:
       active: false
     LTC_BTC:
@@ -152,11 +152,11 @@ stocks:
     SJCX_BTC:
       active: false
     STEEM_BTC:
-      active: false
+      active: true
     STEEM_ETH:
       active: false
     STRAT_BTC:
-      active: false
+      active: true
     STR_BTC:
       active: false
     STR_USDT:
@@ -188,7 +188,7 @@ stocks:
     XVC_BTC:
       active: false
     ZEC_BTC:
-      active: false
+      active: true
     ZEC_ETH:
       active: false
     ZEC_USDT:

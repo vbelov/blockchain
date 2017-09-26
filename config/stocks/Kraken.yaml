@@ -98,7 +98,8 @@ stocks:
     XRP_USD:
       active: false
     ZEC_XBT:
-      active: false
+      active: true
+      real_code: ZEC_BTC
     ZEC_EUR:
       active: false
     ZEC_USD:

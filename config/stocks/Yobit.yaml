@@ -513,7 +513,7 @@ stocks:
     DLISK_BTC:
       active: false
     DOGE_BTC:
-      active: false
+      active: true
     DOGE_RUR:
       active: false
     DOGE_USD:
@@ -1017,7 +1017,7 @@ stocks:
     LSD_BTC:
       active: false
     LSK_BTC:
-      active: false
+      active: true
     LTC_BTC:
       active: true
     LTC_RUR:
@@ -1805,7 +1805,7 @@ stocks:
     WASH_BTC:
       active: false
     WAVES_BTC:
-      active: false
+      active: true
     WAY_BTC:
       active: false
     WBB_BTC:
@@ -1943,7 +1943,7 @@ stocks:
     YOVI_BTC:
       active: false
     ZEC_BTC:
-      active: false
+      active: true
     ZECD_BTC:
       active: false
     ZEIT_BTC:

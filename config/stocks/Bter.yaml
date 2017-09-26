@@ -165,7 +165,7 @@ stocks:
     HKG_BTC:
       active: false
     DOGE_BTC:
-      active: false
+      active: true
     DASH_BTC:
       active: true
     ETH_BTC:
@@ -205,6 +205,6 @@ stocks:
     ETC_ETH:
       active: false
     ZEC_BTC:
-      active: false
+      active: true
     ZEC_CNY:
       active: false

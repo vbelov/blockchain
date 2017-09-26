@@ -4,7 +4,7 @@ stocks:
     LTC_BTC:
       active: true
     DOGE_BTC:
-      active: false
+      active: true
     VTC_BTC:
       active: false
     PPC_BTC:
@@ -216,11 +216,11 @@ stocks:
     MEME_BTC:
       active: false
     STEEM_BTC:
-      active: false
+      active: true
     2GIVE_BTC:
       active: false
     LSK_BTC:
-      active: false
+      active: true
     PDC_BTC:
       active: false
     BRK_BTC:
@@ -230,7 +230,7 @@ stocks:
     DGD_ETH:
       active: false
     WAVES_BTC:
-      active: false
+      active: true
     RISE_BTC:
       active: false
     LBC_BTC:
@@ -246,7 +246,7 @@ stocks:
     ETC_ETH:
       active: false
     STRAT_BTC:
-      active: false
+      active: true
     UNB_BTC:
       active: false
     SYNX_BTC:
@@ -274,7 +274,7 @@ stocks:
     NEO_BTC:
       active: true
     ZEC_BTC:
-      active: false
+      active: true
     ZCL_BTC:
       active: false
     IOP_BTC:

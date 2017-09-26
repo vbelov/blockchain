@@ -18,7 +18,7 @@ stocks:
     DASH_USD:
       active: false
     DOGE_BTC:
-      active: false
+      active: true
     ETH_BTC:
       active: true
     ETH_EUR:
@@ -44,7 +44,7 @@ stocks:
     USD_RUB:
       active: false
     WAVES_BTC:
-      active: false
+      active: true
     XMR_BTC:
       active: true
     XMR_EUR:
@@ -52,7 +52,7 @@ stocks:
     XMR_USD:
       active: false
     ZEC_BTC:
-      active: false
+      active: true
     ZEC_EUR:
       active: false
     ZEC_RUB:
