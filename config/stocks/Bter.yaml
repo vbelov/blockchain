@@ -1,0 +1,210 @@
+---
+stocks:
+  Bter:
+    BTC_CNY:
+      active: false
+    LTC_CNY:
+      active: false
+    XRP_CNY:
+      active: false
+    XRP_BTC:
+      active: true
+    BCC_CNY:
+      active: false
+    BCC_BTC:
+      active: true
+      real_code: BCH_BTC
+    QTUM_BTC:
+      active: true
+    QTUM_ETH:
+      active: false
+    QTUM_CNY:
+      active: false
+    ZRX_BTC:
+      active: false
+    ZRX_ETH:
+      active: false
+    ZRX_CNY:
+      active: false
+    DNT_BTC:
+      active: false
+    DNT_ETH:
+      active: false
+    DNT_CNY:
+      active: false
+    LLT_ETH:
+      active: false
+    LLT_CNY:
+      active: false
+    DPY_ETH:
+      active: false
+    ETP_BTC:
+      active: false
+    ETP_CNY:
+      active: false
+    OAX_BTC:
+      active: false
+    OAX_ETH:
+      active: false
+    UBC_BTC:
+      active: false
+    UBC_ETH:
+      active: false
+    LRC_ETH:
+      active: false
+    LRC_CNY:
+      active: false
+    PST_BTC:
+      active: false
+    PST_ETH:
+      active: false
+    PST_CNY:
+      active: false
+    TNT_ETH:
+      active: false
+    TNT_CNY:
+      active: false
+    BTS_CNY:
+      active: false
+    CNC_CNY:
+      active: false
+    REP_CNY:
+      active: false
+    BAT_CNY:
+      active: false
+    SNT_CNY:
+      active: false
+    SNT_BTC:
+      active: false
+    SNT_ETH:
+      active: false
+    BTM_ETH:
+      active: false
+    OMG_CNY:
+      active: false
+    OMG_BTC:
+      active: true
+    OMG_ETH:
+      active: false
+    PAY_CNY:
+      active: false
+    PAY_BTC:
+      active: false
+    PAY_ETH:
+      active: false
+    BAT_ETH:
+      active: false
+    ICO_CNY:
+      active: false
+    ICO_BTC:
+      active: false
+    ICO_ETH:
+      active: false
+    CVC_CNY:
+      active: false
+    CVC_BTC:
+      active: false
+    CVC_ETH:
+      active: false
+    DOC_CNY:
+      active: false
+    DOC_BTC:
+      active: false
+    STORJ_CNY:
+      active: false
+    STORJ_BTC:
+      active: false
+    STORJ_ETH:
+      active: false
+    EOS_CNY:
+      active: false
+    EOS_BTC:
+      active: false
+    EOS_ETH:
+      active: false
+    DOGE_CNY:
+      active: false
+    DASH_CNY:
+      active: false
+    ETH_CNY:
+      active: false
+    ETC_CNY:
+      active: false
+    FTC_CNY:
+      active: false
+    IFC_CNY:
+      active: false
+    NMC_CNY:
+      active: false
+    NXT_CNY:
+      active: false
+    PPC_CNY:
+      active: false
+    TIPS_CNY:
+      active: false
+    TIX_CNY:
+      active: false
+    XCP_CNY:
+      active: false
+    XMR_CNY:
+      active: false
+    XPM_CNY:
+      active: false
+    XTC_CNY:
+      active: false
+    LTC_BTC:
+      active: true
+    BTS_BTC:
+      active: false
+    CNC_BTC:
+      active: false
+    REP_BTC:
+      active: false
+    BAT_BTC:
+      active: false
+    HKG_BTC:
+      active: false
+    DOGE_BTC:
+      active: false
+    DASH_BTC:
+      active: true
+    ETH_BTC:
+      active: true
+    ETC_BTC:
+      active: true
+    FTC_BTC:
+      active: false
+    NMC_BTC:
+      active: false
+    NXT_BTC:
+      active: false
+    PPC_BTC:
+      active: false
+    XTC_BTC:
+      active: false
+    XCN_BTC:
+      active: false
+    XCP_BTC:
+      active: false
+    XEM_BTC:
+      active: true
+    XEM_CNY:
+      active: false
+    XPM_BTC:
+      active: false
+    XMR_BTC:
+      active: true
+    MG_BTC:
+      active: false
+    IFC_LTC:
+      active: false
+    TIPS_LTC:
+      active: false
+    TIX_LTC:
+      active: false
+    ETC_ETH:
+      active: false
+    ZEC_BTC:
+      active: false
+    ZEC_CNY:
+      active: false
