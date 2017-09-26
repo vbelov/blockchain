@@ -52,7 +52,7 @@ module Stocks
     end
 
     def refresh_time
-      Glass.where(stock_code: stock_code).order(created_at: :desc).first&.created_at
+      Glass.where(stock_code: stock_code).order(time: :desc).first&.time
     end
 
     def process_vector(vector, amount)
