@@ -97,6 +97,7 @@ module Stocks
     def process_glass_fast(glass, action, amount)
       json = glass.send("#{action}_orders")
       raw_orders = JSON.parse(json)
+      return nil if raw_orders.empty?
       return raw_orders.first[0] if amount == 0
 
       base_volume = amount

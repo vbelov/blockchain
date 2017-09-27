@@ -32,8 +32,8 @@ class CreateArbitragePeriods
           %i(sell buy).map do |action|
             points = glasses.map do |glass|
               rate = stock.process_glass_fast(glass, action, volume)
-              [glass.time, rate]
-            end
+              [glass.time, rate] if rate
+            end.compact
             [action, points]
           end.to_h
         end
