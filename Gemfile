@@ -47,6 +47,7 @@ gem 'devise-bootstrap-views'
 gem 'momentjs-rails'
 gem 'rails_bootstrap_sortable'
 gem 'minimization'
+gem 'concurrent-ruby', require: 'concurrent'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

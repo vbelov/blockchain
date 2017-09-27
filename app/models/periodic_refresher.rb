@@ -1,25 +1,27 @@
 class PeriodicRefresher
-  def self.run
-    threads = Stock.all.map do |stock|
-      Thread.new do
-        new(stock).run
-      end
-    end
-    threads.each(&:join)
-  end
-
-  def initialize(stock)
-    @stock = stock
-  end
-
   def run
     counter = 0
+    pool = Concurrent::FixedThreadPool.new(5) # 5 threads
 
     loop do
       begin
         my_sleep
-        puts "updating #{@stock.stock_code} ..."
-        @stock.refresh_glasses
+
+        Stock.all.each do |stock|
+          pool.post do
+            begin
+              puts "updating #{stock.stock_code} ..."
+              Rails.application.executor.wrap do
+                stock.refresh_glasses
+              end
+            rescue => err
+              puts '===================  ERROR  ===================='
+              puts err.message
+              err.backtrace.each { |l| puts l }
+            end
+          end
+        end
+
         counter += 1
           # break if counter == 1
       rescue => err
@@ -34,7 +36,7 @@ class PeriodicRefresher
 
   def my_sleep
     seconds = 60 - Time.now.sec
-    puts "#{@stock.stock_code}: going to sleep for #{seconds} seconds"
+    puts "going to sleep for #{seconds} seconds"
     sleep(seconds)
   end
 end

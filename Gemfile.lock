@@ -247,6 +247,7 @@ DEPENDENCIES
   capybara (~> 2.13)
   chartkick
   coffee-rails (~> 4.2)
+  concurrent-ruby
   devise
   devise-bootstrap-views
   jbuilder (~> 2.5)
