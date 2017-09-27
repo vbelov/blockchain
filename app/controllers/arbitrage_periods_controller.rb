@@ -2,7 +2,7 @@ class ArbitragePeriodsController < ApplicationController
   helper_method :best_point
 
   def index
-    @periods = ArbitragePeriod.order(max_revenue: :desc).limit(100)
+    @periods = ArbitragePeriod.order(started_at: :desc).limit(100)
   end
 
   def show
