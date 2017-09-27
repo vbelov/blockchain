@@ -1,7 +1,7 @@
 module Graphs
   class ArbitrageController < ApplicationController
     include ActiveSupport::Benchmarkable
-    helper_method :valid_pairs, :pair, :volume, :charts
+    helper_method :pair_codes, :pair, :volume, :charts, :stock_code1, :stock_code2, :active_stocks
 
     def show
     end
@@ -15,13 +15,15 @@ module Graphs
             pair_of_actions = %i(sell buy)
             points_by_stock = {}
 
-            Stock.all.each do |stock|
+            stocks = [stock1, stock2]
+
+            stocks.each do |stock|
               stock_code = stock.code
               time = 24.hours.ago
               glasses = Glass.where(
                   stock_code: stock_code,
-                  target_code: target_currency,
-                  base_code: base_currency,
+                  target_code: pair.target_code,
+                  base_code: pair.base_code,
               ).where('time > ?', time).order(:time).to_a
 
               if glasses.any?
@@ -58,7 +60,7 @@ module Graphs
                   if sell_point
                     buy_price = point[1]
                     sell_price = sell_point[1]
-                    [time, (sell_price / buy_price - 1) * 100.0]
+                    [time, (sell_price / buy_price - 1) * 100.0] if sell_price
                   end
                 end.compact
 
@@ -71,38 +73,47 @@ module Graphs
           end
     end
 
-    def vector
-      Vector.my_find(target_currency, base_currency, action)
-    end
-
-    def target_currency
-      pair.split(' / ')[0].downcase
-    end
-
-    def base_currency
-      pair.split(' / ')[1].downcase
-    end
-
     def valid_pairs
-      Stock.all
+      @valid_pairs ||= Stock.all
           .flat_map(&:valid_pairs)
           .group_by(&:itself)
           .select { |p, pairs| pairs.count > 1 }
           .map(&:first)
-          .map(&:slashed_code)
+          .sort_by(&:slashed_code)
+    end
+
+    def pair_codes
+      valid_pairs.map(&:slashed_code)
     end
 
     def pair
-      find = ->(code) { valid_pairs.find { |p| p == code } }
-      find.(glass_params[:pair]) || find.('ETH / BTC') || valid_pairs.first
+      find = ->(code) { valid_pairs.find { |p| p.slashed_code == code } }
+      find.(params[:pair]) || find.('ZEC / BTC') || valid_pairs.first
+    end
+
+    def active_stocks
+      @active_stocks ||= Stock.all.select { |s| s.valid_pairs.include?(pair) }
+    end
+
+    def stock_code1
+      stock1.code
+    end
+
+    def stock1
+      active_stocks.find { |s| s.code == params[:stock_code1] } || active_stocks.first
+    end
+
+    def stock_code2
+      stock2.code
+    end
+
+    def stock2
+      ss = active_stocks - [stock1]
+      ss.find { |s| s.code == params[:stock_code2] } || ss.first
     end
 
     def volume
-      (glass_params[:volume].presence || 0.1).to_f
-    end
-
-    def glass_params
-      params[:glass].presence || {}
+      (params[:volume].presence || 0.1).to_f
     end
   end
 end

@@ -29,8 +29,13 @@ Highcharts.setOptions({
   }
 });
 
-$ ->
+$(document).on "turbolinks:load", ->
   $("form.glass-form").each ->
     form = $(this)
     $('#glass_stock_name').on 'change', ->
+      form.submit()
+
+  $("form.arbitrage-graph-form").each ->
+    form = $(this)
+    $('#pair').on 'change', ->
       form.submit()

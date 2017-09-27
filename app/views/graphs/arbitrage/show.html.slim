@@ -2,8 +2,10 @@
 
 br
 
-= simple_form_for :glass, url: graphs_arbitrage_path, method: :get, html: { class: 'form-inline' }, wrapper: :inline_form do |f|
-  = f.input :pair, collection: valid_pairs, label: 'Пара', selected: pair, autofocus: true
+= simple_form_for '', url: graphs_arbitrage_path, method: :get, html: { class: 'form-inline arbitrage-graph-form' }, wrapper: :inline_form do |f|
+  = f.input :pair, collection: pair_codes, label: 'Пара', selected: pair.slashed_code, autofocus: true
+  = f.input :stock_code1, collection: active_stocks.map(&:code), label: 'Биржа1', selected: stock_code1
+  = f.input :stock_code2, collection: active_stocks.map(&:code), label: 'Биржа2', selected: stock_code2
   = f.input :volume, as: :numeric, label: 'Объем', input_html: {value: volume}
   = f.button :submit, 'Загрузить'
 
