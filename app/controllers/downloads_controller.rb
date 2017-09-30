@@ -40,15 +40,15 @@ class DownloadsController < ApplicationController
   end
 
   def time_from_str
-    time_from.strftime("%d.%m.%Y %H:%M")
+    time_from.strftime('%d.%m.%Y %H:%M')
   end
 
   def time_to
-    @time_to ||= Time.zone.parse(params[:time_to]) rescue Time.zone.now
+    @time_to ||= (Time.zone.parse(params[:time_to]) rescue Time.zone.now)
   end
 
   def time_to_str
-    time_to.strftime("%d.%m.%Y %H:%M")
+    time_to.strftime('%d.%m.%Y %H:%M')
   end
 
   def volume
