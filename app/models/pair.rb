@@ -49,6 +49,7 @@ class Pair
 
   class << self
     def find_by_code(code)
+      return if code.blank?
       @all ||= {}
       c1, c2 = code.split(/[\/_]/).map(&:strip)
       @all[c2] ||= {}
@@ -65,5 +66,9 @@ class Pair
     def visible
       Stock.all.flat_map(&:visible_pairs).map(&:pair).uniq
     end
+  end
+
+  def visible_on_stocks
+    Stock.all.select { |s| s.visible_pairs.map(&:pair).include?(self) }
   end
 end

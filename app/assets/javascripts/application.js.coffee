@@ -16,12 +16,15 @@
 #
 #= require jquery
 #= require bootstrap-sprockets
+#= require underscore
 
 #= require highcharts
 #= require chartkick
 
 #= require moment
+#= require moment/ru
 #= require bootstrap-sortable
+#= require bootstrap-datetimepicker
 
 Highcharts.setOptions({
   global: {
@@ -30,6 +33,14 @@ Highcharts.setOptions({
 });
 
 $(document).on "turbolinks:load", ->
+  $('.datetimepicker').datetimepicker();
+
+  $('select.reload-on-change').on 'change', ->
+    params = $(this).closest('form').serializeArray()
+    params = _.reject(params, (param)-> param.name == "authenticity_token")
+    query = $.param(params)
+    window.location.href = window.location.pathname + "?" + query
+
   $("form.glass-form").each ->
     form = $(this)
     $('#glass_stock_name').on 'change', ->

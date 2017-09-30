@@ -11,4 +11,5 @@ Rails.application.routes.draw do
   end
   resources :arbitrage_periods, only: [:index, :show]
   resources :arbitrage_points, only: :show
+  resources :downloads, only: [:index, :create]
 end

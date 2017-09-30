@@ -1,0 +1,8 @@
+= simple_form_for '', url: downloads_path, method: :post, html: { class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+  = f.input :pair_code, collection: pair_codes, label: 'Пара', selected: pair&.slashed_code, autofocus: true, input_html: {class: 'reload-on-change'}
+  = f.input :stock_code, collection: stock_codes, label: 'Биржа', selected: stock&.code
+  = f.input :time_from, as: :date_time_picker, label: 'От', input_html: {value: time_from_str}
+  = f.input :time_to, as: :date_time_picker, label: 'До', input_html: {value: time_to_str}
+  = f.input :volume, as: :numeric, label: 'Объем', input_html: {value: volume}
+
+  = f.button :submit, 'Выгрузить', data: {disable_with: false}

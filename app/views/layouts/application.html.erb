@@ -41,6 +41,9 @@
             <%= content_tag :li, class: (controller_path =~ /graphs/ ? 'active' : '') do %>
                 <%= link_to 'Графики', graphs_arbitrage_path %>
             <% end %>
+            <%= content_tag :li, class: (controller_name == 'downloads' ? 'active' : '') do %>
+                <%= link_to 'Выгрузка', downloads_path %>
+            <% end %>
             <%= content_tag :li do %>
                 <%= link_to 'Выйти', destroy_user_session_path, method: :delete %>
             <% end %>

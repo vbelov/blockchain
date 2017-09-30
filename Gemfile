@@ -48,6 +48,9 @@ gem 'momentjs-rails'
 gem 'rails_bootstrap_sortable'
 gem 'minimization'
 gem 'concurrent-ruby', require: 'concurrent'
+gem 'axlsx'
+gem 'underscore-rails'
+gem 'bootstrap3-datetimepicker-rails'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
