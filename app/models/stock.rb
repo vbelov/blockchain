@@ -39,9 +39,12 @@ class Stock
     @active_pairs ||= StockPair.find_all_by(stock_code: code, active: true)
   end
 
-  # TODO rename to visible_stock_pairs
+  def visible_stock_pairs
+    @visible_stock_pairs ||= StockPair.find_all_by(stock_code: code, visible: true)
+  end
+
   def visible_pairs
-    @visible_pairs ||= StockPair.find_all_by(stock_code: code, visible: true)
+    @visible_pairs ||= visible_stock_pairs.map(&:pair)
   end
 
   def cross_pairs

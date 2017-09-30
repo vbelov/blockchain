@@ -64,11 +64,11 @@ class Pair
     end
 
     def visible
-      Stock.all.flat_map(&:visible_pairs).map(&:pair).uniq
+      Stock.all.flat_map(&:visible_pairs).uniq
     end
   end
 
   def visible_on_stocks
-    Stock.all.select { |s| s.visible_pairs.map(&:pair).include?(self) }
+    Stock.all.select { |s| s.visible_pairs.include?(self) }
   end
 end
