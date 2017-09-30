@@ -1,8 +1,6 @@
 module Stocks
   module Poloniex
     def download_order_books(stock_pairs = nil)
-      stock_pairs ||= downloadable_pairs
-
       stock_pairs.map do |stock_pair|
         hash = get(command: 'returnOrderBook', currencyPair: stock_pair.api_code, depth: 100)
         [stock_pair, hash] if hash

@@ -3,7 +3,6 @@ module Stocks
   module Bitstamp
     # noinspection RubyStringKeysInHashInspection
     def download_order_books(stock_pairs = nil)
-      stock_pairs ||= downloadable_pairs
       stock_pairs.map do |stock_pair|
         response = get("order_book/#{stock_pair.api_code}")
         [stock_pair, response.slice('bids', 'asks')]

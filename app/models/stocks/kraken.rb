@@ -2,7 +2,6 @@ module Stocks
   # https://www.kraken.com/help/api#public-market-data
   module Kraken
     def download_order_books(stock_pairs = nil)
-      stock_pairs ||= downloadable_pairs
       stock_pairs.map do |stock_pair|
         response = get('Depth', pair: stock_pair.api_code)
 

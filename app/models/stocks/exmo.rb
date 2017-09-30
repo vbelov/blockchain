@@ -1,7 +1,6 @@
 module Stocks
   module Exmo
     def download_order_books(pairs = nil)
-      pairs ||= downloadable_pairs
       code = pairs.map(&:api_code).join(',')
       hash = get(:order_book, pair: code)
       pairs.map do |stock_pair|

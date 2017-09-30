@@ -3,7 +3,6 @@ module Stocks
   module Liqui
     # noinspection RubyStringKeysInHashInspection
     def download_order_books(stock_pairs = nil)
-      stock_pairs ||= downloadable_pairs
       # stock_pairs.select! { |p| p.api_code == 'dash_btc' }
       stock_pairs.map do |stock_pair|
         response = get("depth/#{stock_pair.api_code}")

@@ -35,8 +35,8 @@ class Stock
     end
   end
 
-  def active_pairs
-    @active_pairs ||= StockPair.find_all_by(stock_code: code, active: true)
+  def downloadable_stock_pairs
+    @downloadable_stock_pairs ||= StockPair.find_all_by(stock_code: code, active: true)
   end
 
   def visible_stock_pairs

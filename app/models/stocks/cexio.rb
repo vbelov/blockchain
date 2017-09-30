@@ -2,7 +2,6 @@ module Stocks
   # https://cex.io/rest-api
   module Cexio
     def download_order_books(stock_pairs = nil)
-      stock_pairs ||= downloadable_pairs
       stock_pairs.map do |stock_pair|
         response = get("order_book/#{stock_pair.api_code}")
         if response

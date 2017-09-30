@@ -1,8 +1,6 @@
 module Stocks
   module Livecoin
     def download_order_books(stock_pairs = nil)
-      stock_pairs ||= downloadable_pairs
-
       stock_pairs.map do |stock_pair|
         hash = get('order_book', currencyPair: stock_pair.api_code)
         if hash

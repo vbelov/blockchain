@@ -1,7 +1,6 @@
 module Stocks
   module C2cx
     def download_order_books(stock_pairs = nil)
-      stock_pairs ||= downloadable_pairs
       stock_pairs.map do |stock_pair|
         response = get('getorderbook', symbol: stock_pair.api_code)
         if response
