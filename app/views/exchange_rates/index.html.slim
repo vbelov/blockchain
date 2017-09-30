@@ -1,4 +1,4 @@
-= simple_form_for :exchange_rates, url: exchange_rates_path, method: :get, html: { class: 'form-inline' }, wrapper: :inline_form do |f|
+= simple_form_for '', url: exchange_rates_path, method: :get, html: { class: 'form-inline' }, wrapper: :inline_form do |f|
   = f.input :stock_name, collection: Stock.all_codes, label: 'Биржа', selected: stock&.code, include_blank: 'Все'
   = f.input :pair, collection: list_of_pairs, label: 'Пара', selected: selected_pair
   = f.input :volume, as: :numeric, label: 'Объем', input_html: {value: volume}, autofocus: true

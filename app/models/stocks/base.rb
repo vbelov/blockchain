@@ -6,10 +6,6 @@ module Stocks
       code
     end
 
-    def valid_pairs
-      @valid_pairs ||= downloadable_stock_pairs.map(&:pair)
-    end
-
     def refresh_glasses
       download_order_books(downloadable_stock_pairs).each { |pair, data| save_glass(pair, data) }
       refresh_cross_pairs

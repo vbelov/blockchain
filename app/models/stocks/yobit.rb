@@ -32,40 +32,7 @@ module Stocks
 
       # yobit specific
       def ticker
-        @ticker ||= get("ticker/#{valid_pairs.join('-')}")
-      end
-
-      def valid_pairs_info
-        info.merge('pairs' => info['pairs'].slice(*valid_pairs))
-      end
-
-      # под вопросом
-      def approximate_exchange_rates
-        @approximate_exchange_rates ||=
-            begin
-              rates = []
-              valid_pairs.each do |pair|
-                avg = ticker[pair]['avg']
-                rates << [pair, avg]
-                another_pair = pair.split('_').reverse.join('_')
-                rates << [another_pair, 1.0 / avg]
-              end
-              rates.to_h
-            end
-      end
-
-      # под вопросом
-      def approximate_amounts(base_currency, base_amount)
-        currencies.map do |currency|
-          next [currency, base_amount] if currency == base_currency
-          pair = "#{base_currency}_#{currency}"
-          rate = approximate_exchange_rates[pair]
-          if rate
-            [currency, rate * base_amount]
-          else
-            [currency, nil]
-          end
-        end.to_h
+        @ticker ||= get("ticker/#{pair_codes.join('-')}")
       end
 
       def get_pairs

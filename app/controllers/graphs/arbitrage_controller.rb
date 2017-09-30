@@ -73,9 +73,9 @@ module Graphs
           end
     end
 
-    def valid_pairs
-      @valid_pairs ||= Stock.all
-          .flat_map(&:valid_pairs)
+    def pairs
+      @pairs ||= Stock.all
+          .flat_map(&:visible_pairs)
           .group_by(&:itself)
           .select { |p, pairs| pairs.count > 1 }
           .map(&:first)
@@ -83,16 +83,16 @@ module Graphs
     end
 
     def pair_codes
-      valid_pairs.map(&:slashed_code)
+      pairs.map(&:slashed_code)
     end
 
     def pair
-      find = ->(code) { valid_pairs.find { |p| p.slashed_code == code } }
-      find.(params[:pair]) || find.('ZEC / BTC') || valid_pairs.first
+      find = ->(code) { pairs.find { |p| p.slashed_code == code } }
+      find.(params[:pair]) || find.('ZEC / BTC') || pairs.first
     end
 
     def active_stocks
-      @active_stocks ||= Stock.all.select { |s| s.valid_pairs.include?(pair) }
+      @active_stocks ||= Stock.all.select { |s| s.visible_pairs.include?(pair) }
     end
 
     def stock_code1

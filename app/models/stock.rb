@@ -39,6 +39,10 @@ class Stock
     @downloadable_stock_pairs ||= StockPair.find_all_by(stock_code: code, active: true)
   end
 
+  def downloadable_pairs
+    @downloadable_pairs ||= downloadable_stock_pairs.map(&:pair)
+  end
+
   def visible_stock_pairs
     @visible_stock_pairs ||= StockPair.find_all_by(stock_code: code, visible: true)
   end

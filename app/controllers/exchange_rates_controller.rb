@@ -1,7 +1,7 @@
 class ExchangeRatesController < ApplicationController
   helper_method :volume,
                 :stock,
-                :valid_pairs, :list_of_pairs, :selected_pair
+                :list_of_pairs, :selected_pair
 
   def index
     rates = stocks.flat_map do |stock|
@@ -27,35 +27,31 @@ class ExchangeRatesController < ApplicationController
   private
 
   def stock
-    Stock.find_by_code(exchange_rates_params[:stock_name])
+    Stock.find_by_code(params[:stock_name])
   end
 
   def stocks
     @stocks ||= Array.wrap(stock || Stock.all)
   end
 
-  def valid_pairs
+  def pair_codes
     stocks.flat_map { |s| s.visible_pairs.map(&:slashed_code) }.uniq.sort
   end
 
   def list_of_pairs
-    ['Все'] + valid_pairs
+    ['Все'] + pair_codes
   end
 
   def selected_pair
-    _pair = exchange_rates_params[:pair]
+    _pair = params[:pair]
     if _pair.blank? || _pair == 'Все'
       nil
     else
-      valid_pairs.find { |p| p == _pair }
+      pair_codes.find { |p| p == _pair }
     end
   end
 
   def volume
-    (exchange_rates_params[:volume].presence || 0.1).to_f
-  end
-
-  def exchange_rates_params
-    params[:exchange_rates].presence || {}
+    (params[:volume].presence || 0.1).to_f
   end
 end
