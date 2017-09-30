@@ -44,7 +44,7 @@ class DownloadsController < ApplicationController
   end
 
   def time_to
-    @time_to ||= Time.zone.parse(params[:time_to]) rescue Time.now
+    @time_to ||= Time.zone.parse(params[:time_to]) rescue Time.zone.now
   end
 
   def time_to_str
