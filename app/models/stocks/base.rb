@@ -158,24 +158,6 @@ module Stocks
       )
     end
 
-    def current_exchange_rates(base_currency, base_amount, pairs: nil)
-      stock_pairs = pairs&.map { |p| get_stock_pair(p) }&.compact&.select(&:visible) || visible_stock_pairs
-      stock_pairs.map do |stock_pair|
-        pair = stock_pair.pair
-        er = ExchangeRate.new(stock: stock_code, pair: pair)
-
-        [:buy, :sell].each do |action|
-          if pair.base_currency == base_currency
-            vector = Vector.new(pair: pair, action: action)
-            result = process_vector(vector, base_amount)
-            er.send("#{action}_rate=", result.effective_rate) if result && !result.error
-          end
-        end
-
-        er
-      end
-    end
-
     def serialize_pair(target_code, base_code)
       raise NotImplementedError
     end

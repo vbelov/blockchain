@@ -4,9 +4,7 @@ class ExchangeRatesController < ApplicationController
                 :list_of_pairs, :selected_pair
 
   def index
-    rates = stocks.flat_map do |stock|
-      stock.current_exchange_rates(Currency.btc, volume, pairs: selected_pair && [selected_pair])
-    end
+    rates = current_exchange_rates
     @messages = []
     @rates_by_pair = rates.group_by(&:pair).to_a.sort_by { |pair, ers| pair.slashed_code }.to_h
     @rates_by_pair.each do |pair, ers|
@@ -25,6 +23,40 @@ class ExchangeRatesController < ApplicationController
   end
 
   private
+
+  def current_exchange_rates
+    base_currency = Currency.btc
+    base_amount = volume
+
+    time = Glass.maximum(:time) - 1.minute
+    glasses = Glass.where(time: time).to_a
+
+    stocks.flat_map do |stock|
+      stock_pairs = selected_pair ?
+          Array.wrap(selected_pair).map { |p| stock.get_stock_pair(p) }.compact.select(&:visible) :
+          stock.visible_stock_pairs
+
+      stock_pairs.map do |stock_pair|
+        pair = stock_pair.pair
+        er = ExchangeRate.new(stock: stock.code, pair: pair)
+
+        if pair.base_currency == base_currency
+          glass = glasses.find do |g|
+            g.stock_code == stock.code && g.target_code == pair.target_code && g.base_code == pair.base_code
+          end
+
+          if glass
+            [:buy, :sell].each do |action|
+              rate = stock.process_glass_fast(glass, action, base_amount)
+              er.send("#{action}_rate=", rate) if rate
+            end
+          end
+        end
+
+        er
+      end
+    end
+  end
 
   def stock
     Stock.find_by_code(params[:stock_name])
