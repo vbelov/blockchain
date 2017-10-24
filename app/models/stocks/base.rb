@@ -14,7 +14,7 @@ module Stocks
     def save_glass(stock_pair, pair_data)
       now = Time.now
       time = now.at_beginning_of_minute
-      time = time + 1.minute if now.sec > 30
+      # time = time + 1.minute if now.sec > 30
 
       bids, asks = %w(bids asks).map do |a|
         base_volume = 0

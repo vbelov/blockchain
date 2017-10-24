@@ -28,7 +28,9 @@ class ExchangeRatesController < ApplicationController
     base_currency = Currency.btc
     base_amount = volume
 
-    time = Glass.maximum(:time) - 1.minute
+    now = Time.zone.now
+    time = now.at_beginning_of_minute
+    time = time - 1.minute if now.sec < 30
     glasses = Glass.where(time: time).to_a
 
     stocks.flat_map do |stock|
@@ -50,6 +52,8 @@ class ExchangeRatesController < ApplicationController
               rate = stock.process_glass_fast(glass, action, base_amount)
               er.send("#{action}_rate=", rate) if rate
             end
+          else
+            er.outdated = true
           end
         end
 

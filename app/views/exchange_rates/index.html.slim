@@ -28,5 +28,9 @@ table.table
             td= er.pair.slashed_code
           - else
             td= er.stock
-          td class=highlight_arbitrage(er, :buy) = fr(er.buy_rate) || 'нет данных'
-          td class=highlight_arbitrage(er, :sell) = fr(er.sell_rate) || 'нет данных'
+          - if er.outdated
+            td данные устарели
+            td данные устарели
+          - else
+            td class=highlight_arbitrage(er, :buy) = fr(er.buy_rate) || 'превышение объема'
+            td class=highlight_arbitrage(er, :sell) = fr(er.sell_rate) || 'превышение объема'
