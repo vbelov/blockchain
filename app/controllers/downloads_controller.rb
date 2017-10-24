@@ -2,6 +2,7 @@ class DownloadsController < ApplicationController
   helper_method :stock_codes, :stock,
                 :pair_codes, :pair,
                 :time_from_str, :time_to_str,
+                :data_time_range,
                 :volume
 
   def index
@@ -32,7 +33,7 @@ class DownloadsController < ApplicationController
   end
 
   def stock
-    Stock.find_by_code(params[:stock_code]) || stocks.first
+    stocks.find { |s| s.code == params[:stock_code] } || stocks.first
   end
 
   def time_from
@@ -53,5 +54,19 @@ class DownloadsController < ApplicationController
 
   def volume
     0.1
+  end
+
+  def data_time_range
+    @data_time_range ||=
+        if stock && pair
+          sql = Glass.where(
+              stock_code: stock.code,
+              target_code: pair.target_code,
+              base_code: pair.base_code
+          ).order(:time)
+          g1 = sql.first
+          g2 = sql.last
+          (g1.time..g2.time) if g1 && g2
+        end
   end
 end
