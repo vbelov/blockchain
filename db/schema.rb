@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171025072701) do
+ActiveRecord::Schema.define(version: 20171025080850) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,6 +41,7 @@ ActiveRecord::Schema.define(version: 20171025072701) do
 
   create_table "currencies", id: false, force: :cascade do |t|
     t.string "code", null: false
+    t.boolean "active", default: false
     t.index ["code"], name: "index_currencies_on_code", unique: true
   end
 
@@ -57,6 +58,13 @@ ActiveRecord::Schema.define(version: 20171025072701) do
     t.index ["stock_code"], name: "index_glasses_on_stock_code"
     t.index ["target_code"], name: "index_glasses_on_target_code"
     t.index ["time"], name: "index_glasses_on_time"
+  end
+
+  create_table "stock_currencies", force: :cascade do |t|
+    t.string "stock_code", null: false
+    t.string "stock_currency_code", null: false
+    t.string "app_currency_code", null: false
+    t.index ["stock_code", "app_currency_code"], name: "index_stock_currencies_on_stock_code_and_app_currency_code", unique: true
   end
 
   create_table "users", force: :cascade do |t|
@@ -76,4 +84,5 @@ ActiveRecord::Schema.define(version: 20171025072701) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "stock_currencies", "currencies", column: "app_currency_code", primary_key: "code"
 end
