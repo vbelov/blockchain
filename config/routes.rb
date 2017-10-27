@@ -4,7 +4,6 @@ Rails.application.routes.draw do
 
   resources :exchange_rates, only: :index
   resources :glasses, only: :index
-  resources :commands, only: :index
   namespace :graphs do
     resource :arbitrage, only: :show
     resources :rates, only: :index
@@ -12,4 +11,6 @@ Rails.application.routes.draw do
   resources :arbitrage_periods, only: [:index, :show]
   resources :arbitrage_points, only: :show
   resources :downloads, only: [:index, :create]
+  resources :stocks, only: [:index, :show]
+  resources :stock_currencies, only: [:edit, :update]
 end

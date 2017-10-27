@@ -78,4 +78,12 @@ class StockPair
   def cross_pair?
     cross
   end
+
+  def last_update_time
+    Glass.where(
+        stock_code: stock_code,
+        base_code: base_code,
+        target_code: target_code,
+    ).order(time: :desc).first.created_at
+  end
 end

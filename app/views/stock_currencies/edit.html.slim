@@ -1,0 +1,8 @@
+ol.breadcrumb
+  li= link_to 'Биржи', stocks_path
+  li= link_to stock.code, stock_path(stock)
+  li.active= stock_currency.currency.CODE
+
+= simple_form_for stock_currency do |f|
+  = f.input :withdrawal_fee, autofocus: true
+  = f.button :submit

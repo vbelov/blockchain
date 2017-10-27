@@ -1,0 +1,29 @@
+ol.breadcrumb
+  li= link_to 'Биржи', stocks_path
+  li.active= @stock.code
+
+table.table
+  thead
+    tr
+      th Пара
+      th Загружать?
+      th Показывать?
+      th Обновлено
+  tbody
+    - @stock.visible_stock_pairs.sort_by(&:slashed_code).each do |stock_pair|
+      tr
+        td= stock_pair.slashed_code
+        td= '✓' if stock_pair.active
+        td= '✓' if stock_pair.visible
+        td= stock_pair.last_update_time
+
+table.table
+  thead
+    tr
+      th Валюта
+      th Комиссия за вывод
+  tbody
+    - @stock.stock_currencies(active: true).each do |stock_currency|
+      tr
+        td= link_to stock_currency.CODE, [:edit, stock_currency]
+        td= stock_currency.withdrawal_fee_str

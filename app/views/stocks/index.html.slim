@@ -1,0 +1,14 @@
+table.table
+  thead
+    tr
+      th Биржа
+      th Последнее обновление
+      th Валют
+      th Активных валют
+  tbody
+    - Stock.all.each do |stock|
+      tr
+        td= link_to stock.stock_code, stock_path(stock)
+        td= stock.refresh_time
+        td= stock.stock_currencies.count
+        td= stock.currencies.active.count
