@@ -32,6 +32,9 @@
 en:
   activerecord:
     attributes:
+      stock:
+        buy_fee: Комиссия покупки
+        sell_fee: Комиссия продажи
       stock_currency:
         withdrawal_fee: Комиссия за вывод
   helpers:

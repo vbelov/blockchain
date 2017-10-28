@@ -6,7 +6,7 @@ class StockCurrenciesController < ApplicationController
 
   def update
     stock_currency.update!(stock_currency_params)
-    redirect_to stock_path(stock)
+    redirect_to stock
   end
 
   private

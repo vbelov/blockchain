@@ -11,6 +11,6 @@ Rails.application.routes.draw do
   resources :arbitrage_periods, only: [:index, :show]
   resources :arbitrage_points, only: :show
   resources :downloads, only: [:index, :create]
-  resources :stocks, only: [:index, :show]
+  resources :stocks, only: [:index, :show, :edit, :update]
   resources :stock_currencies, only: [:edit, :update]
 end

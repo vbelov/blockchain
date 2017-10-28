@@ -1,0 +1,9 @@
+ol.breadcrumb
+  li= link_to 'Биржи', Stock
+  li= link_to stock.code, stock
+  li.active редактировать
+
+= simple_form_for stock do |f|
+  = f.input :buy_fee, autofocus: true
+  = f.input :sell_fee
+  = f.button :submit

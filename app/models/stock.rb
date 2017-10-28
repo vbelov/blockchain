@@ -1,30 +1,17 @@
-class Stock
-  include Virtus.model
+class Stock < ApplicationRecord
+  self.primary_key = :code
+
   include Stocks::Base
   include Stocks::CrossPairs
 
-  attribute :code, String
 
+  after_initialize do |stock|
+    _module = Stocks.const_get(stock.code)
+    stock.extend(_module)
+  end
 
-  class << self
-    def all_codes
-      @all_codes ||= %w(Yobit Poloniex Exmo Livecoin Bittrex Kraken Cexio Bitfinex Liqui Bter Bitstamp).sort
-    end
-
-    def all
-      @all ||= all_codes.map do |code|
-        stock = Stock.new(
-            code: code,
-        )
-        _module = Stocks.const_get(code)
-        stock.extend(_module)
-        stock
-      end
-    end
-
-    def find_by_code(code)
-      all.find { |s| s.code == code }
-    end
+  def self.all_codes
+    @all_codes ||= Stock.pluck(:code)
   end
 
   all_codes.each do |code|

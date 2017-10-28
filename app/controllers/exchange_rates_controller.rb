@@ -63,7 +63,7 @@ class ExchangeRatesController < ApplicationController
   end
 
   def stock
-    Stock.find_by_code(params[:stock_name])
+    Stock.find_by_code(params[:stock_name]) if params[:stock_name].present?
   end
 
   def stocks

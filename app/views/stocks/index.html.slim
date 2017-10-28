@@ -8,7 +8,7 @@ table.table
   tbody
     - Stock.all.each do |stock|
       tr
-        td= link_to stock.stock_code, stock_path(stock)
+        td= link_to stock.stock_code, stock
         td= stock.refresh_time
         td= stock.stock_currencies.count
         td= stock.currencies.active.count

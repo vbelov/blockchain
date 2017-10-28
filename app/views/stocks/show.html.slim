@@ -1,6 +1,15 @@
 ol.breadcrumb
-  li= link_to 'Биржи', stocks_path
-  li.active= @stock.code
+  li= link_to 'Биржи', Stock
+  li.active= stock.code
+
+table.table.table-bordered
+  tbody
+    tr
+      th Комиссия покупки
+      td= stock.buy_fee || 'не указана'
+      th Комиссия продажи
+      td= stock.sell_fee || 'не указана'
+      td= link_to 'редактировать', [:edit, stock]
 
 table.table
   thead
@@ -10,7 +19,7 @@ table.table
       th Показывать?
       th Обновлено
   tbody
-    - @stock.visible_stock_pairs.sort_by(&:slashed_code).each do |stock_pair|
+    - stock.visible_stock_pairs.sort_by(&:slashed_code).each do |stock_pair|
       tr
         td= stock_pair.slashed_code
         td= '✓' if stock_pair.active
@@ -23,7 +32,7 @@ table.table
       th Валюта
       th Комиссия за вывод
   tbody
-    - @stock.stock_currencies(active: true).each do |stock_currency|
+    - stock.stock_currencies(active: true).each do |stock_currency|
       tr
         td= link_to stock_currency.CODE, [:edit, stock_currency]
         td= stock_currency.withdrawal_fee_str

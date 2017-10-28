@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171027073512) do
+ActiveRecord::Schema.define(version: 20171028054357) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,6 +66,13 @@ ActiveRecord::Schema.define(version: 20171027073512) do
     t.string "app_currency_code", null: false
     t.float "withdrawal_fee"
     t.index ["stock_code", "app_currency_code"], name: "index_stock_currencies_on_stock_code_and_app_currency_code", unique: true
+  end
+
+  create_table "stocks", id: false, force: :cascade do |t|
+    t.string "code", null: false
+    t.float "buy_fee"
+    t.float "sell_fee"
+    t.index ["code"], name: "index_stocks_on_code", unique: true
   end
 
   create_table "users", force: :cascade do |t|
