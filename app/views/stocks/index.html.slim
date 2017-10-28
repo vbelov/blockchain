@@ -3,12 +3,16 @@ table.table
     tr
       th Биржа
       th Последнее обновление
+      th Комиссия покупки
+      th Комиссия продажи
       th Валют
       th Активных валют
   tbody
-    - Stock.all.each do |stock|
+    - Stock.all.sort_by(&:code).each do |stock|
       tr
         td= link_to stock.stock_code, stock
         td= stock.refresh_time
+        td= stock.buy_fee
+        td= stock.sell_fee
         td= stock.stock_currencies.count
         td= stock.currencies.active.count
