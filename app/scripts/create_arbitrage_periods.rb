@@ -19,12 +19,13 @@ class CreateArbitragePeriods
 
     stocks = Stock.all
     # stocks = %w(Yobit Poloniex)
+    timerange = (7.days.ago..Time.now)
     stocks.each do |stock|
-      stock_code = stock.code
       glasses = Glass.where(
-          stock_code: stock_code,
+          stock_code: stock.code,
           target_code: pair.target_code,
           base_code: pair.base_code,
+          time: timerange
       ).order(:time).to_a
 
       if glasses.any?
@@ -38,7 +39,7 @@ class CreateArbitragePeriods
           end.to_h
         end
 
-        points_by_stock[stock_code] = stock_points
+        points_by_stock[stock] = stock_points
       end
     end
     active_stocks = points_by_stock.keys
@@ -68,7 +69,7 @@ class CreateArbitragePeriods
   end
 
   def process_unit(buy_stock, sell_stock, pair, points)
-    puts "processing #{buy_stock} / #{sell_stock}, #{pair.slashed_code}"
+    puts "processing #{buy_stock.code} / #{sell_stock.code}, #{pair.slashed_code}"
 
     period_started_at = nil
     period_points = []
@@ -87,8 +88,8 @@ class CreateArbitragePeriods
           duration = (finished_at - period_started_at).to_i
 
           periods << ArbitragePeriod.new(
-              buy_stock_code: buy_stock,
-              sell_stock_code: sell_stock,
+              buy_stock: buy_stock,
+              sell_stock: sell_stock,
               target_code: pair.target_code,
               base_code: pair.base_code,
               started_at: period_started_at,
@@ -109,21 +110,18 @@ class CreateArbitragePeriods
   end
 
   def process_arbitrage_period(period)
-    buy_stock_code = period.buy_stock_code
-    sell_stock_code = period.sell_stock_code
-
-    buy_stock = Stock.find_by_code(buy_stock_code)
-    sell_stock = Stock.find_by_code(sell_stock_code)
+    buy_stock = period.buy_stock
+    sell_stock = period.sell_stock
 
     time_range = (period.started_at..period.finished_at)
     buy_glasses = Glass.where(
-        stock_code: buy_stock_code,
+        stock_code: buy_stock.code,
         target_code: period.target_code,
         base_code: period.base_code,
         time: time_range,
     ).to_a.index_by(&:time)
     sell_glasses = Glass.where(
-        stock_code: sell_stock_code,
+        stock_code: sell_stock.code,
         target_code: period.target_code,
         base_code: period.base_code,
         time: time_range,
