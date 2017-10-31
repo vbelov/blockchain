@@ -3,8 +3,7 @@ class PopulateStockCurrencies < ActiveRecord::Migration[5.1]
   def up
     global_currency_codes = Currency.all.map(&:code)
 
-    Stock.all.each do |stock|
-      stock_code = stock.code
+    %w(Yobit Poloniex Exmo Livecoin Bittrex Kraken Cexio Bitfinex Liqui Bter Bitstamp).sort.each do |stock_code|
       content = YAML.load_file("config/stocks/#{stock_code}.yaml")
       currency_codes = []
       content['stocks'][stock_code].keys.each do |code_in_stock|
